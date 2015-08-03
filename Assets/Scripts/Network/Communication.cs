@@ -4,7 +4,7 @@ using System.Net;
 using System.Net.Sockets;
 using UnityEngine;
 
-public class Communication {
+public partial class Communication {
 	private Socket m_Client = null;
 	private static Communication comm = new Communication();
 	private static Socket socket = null;
@@ -76,7 +76,7 @@ public class Communication {
 			SocketAsyncEventArgs _receiveArgs = new SocketAsyncEventArgs();
 			_receiveArgs.UserToken = message;
 			_receiveArgs.SetBuffer(message.GetBuffer(), 0, 4);
-			_receiveArgs.Completed += new EventHandler<SocketAsyncEventArgs>(Recieve_Completed);
+			_receiveArgs.Completed += new EventHandler<SocketAsyncEventArgs>(Receive_Completed);
 			m_Client.ReceiveAsync(_receiveArgs);
 			Debug.Log("Server Connection Success");
 		}
@@ -92,8 +92,10 @@ public class Communication {
 		Socket _client = (Socket)sender;
 		Message message = (Message)e.UserToken;
 		_client.Send(message.DataBuffer);
+		Console.WriteLine("Send Type: {0}", (char)message.Type);
+		Console.WriteLine("Send Data: {0}", Encoding.Unicode.GetString(message.Data));
 	}
-	private void Recieve_Completed(object sender, SocketAsyncEventArgs e)
+	private void Receive_Completed(object sender, SocketAsyncEventArgs e)
 	{
 		Socket _client = (Socket)sender;
 		Message message = (Message)e.UserToken;
@@ -108,6 +110,13 @@ public class Communication {
 			Debug.Log("Recv Type: " + (char)message.Type);
 			Debug.Log("Recv Data: " + Encoding.Unicode.GetString(message.Data));
 			_client.ReceiveAsync(e);
+
+			try {
+				ReceiveProcessing(message.Type, message.Data);
+			} catch(Exception _e) { 
+				Console.WriteLine(_e.Message);
+				Console.WriteLine(_e.StackTrace);
+			}
 		}
 		else
 		{
