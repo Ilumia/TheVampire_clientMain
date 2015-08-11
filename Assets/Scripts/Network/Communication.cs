@@ -14,20 +14,6 @@ public partial class Communication {
 		}
 		return comm;
 	}
-	public static void DisconnectSocket() {
-		/*
-		 * 서버단에서 유저의 Disconnection을 판단해야 함
-		 * 서버에서 모든 유저에게 n초 마다 ping 전송, m회 이상 응답이 없으면 close 
-		*/
-		try
-		{
-			socket.Close();
-		}
-		catch(Exception e)
-		{
-			Debug.Log(e.Message);
-		}
-	}
 
 	public Communication()
 	{
