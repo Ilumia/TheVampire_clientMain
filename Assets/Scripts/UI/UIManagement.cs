@@ -9,12 +9,16 @@ public class UIManagement : MonoBehaviour {
 	public static List<UISet.UIState> UIEventList;
 	public static List<string> UICautionList;
 	public static List<string> UIRoomList;
+	public static bool chatUpdateFlag;
+	public static bool roomUpdateFlag;
 
 	void Awake () {
 		eventSystem = EventSystem.current;
 		UIEventList = new List<UISet.UIState> ();
 		UICautionList = new List<string> ();
 		UIRoomList = new List<string> ();
+		roomUpdateFlag = false;
+		chatUpdateFlag = true;
 
 		// Initialize UI Set
 		// *Main
@@ -104,6 +108,8 @@ public class UIManagement : MonoBehaviour {
 		UICautionProcessing ();
 		UITabProcessing ();
 		UIEnterProcessing ();
+		UIChatUpdateProcessing ();
+		UIRoomUpdateProcessing ();
 	}
 	void UIEventProcessing() {
 		if (UIEventList.Count == 0) {
@@ -126,29 +132,60 @@ public class UIManagement : MonoBehaviour {
 	}
 	void UITabProcessing() {
 		// Tab in login
-		if (UISet.uiState == UISet.UIState.MAIN_LOGIN) {
-			if(eventSystem.currentSelectedGameObject.name.Equals(UISet.input_email.name)) {
-				if(Input.GetKeyDown(KeyCode.Tab)) {
+		if (Input.GetKeyDown (KeyCode.Tab)) {
+			if (UISet.uiState == UISet.UIState.MAIN_LOGIN) {
+				if(eventSystem.currentSelectedGameObject.name.Equals(UISet.input_email.name)) {
 					UISet.input_password.Select();
 				}
 			}
 		}
 	}
 	void UIEnterProcessing() {
-		if (UISet.uiState == UISet.UIState.MAIN_LOGIN) {
-			// Enter in login
-			if (eventSystem.currentSelectedGameObject.name.Equals (UISet.input_password.name)) {
-				if (Input.GetKeyDown (KeyCode.Return)) {
+		if (Input.GetKeyDown (KeyCode.Return)) {
+			if (UISet.uiState == UISet.UIState.MAIN_LOGIN) {
+				if (eventSystem.currentSelectedGameObject.name.Equals (UISet.input_password.name)) {
 					UISet.Ebtn_login ();
 				}
-			}
-		} else if (UISet.uiState == UISet.UIState.ROOM_READIED) {
-			// Enter in chat
-			if (eventSystem.currentSelectedGameObject.name.Equals (UISet.input_chat.name)) {
-				if (Input.GetKeyDown (KeyCode.Return)) {
+			} else if (UISet.uiState == UISet.UIState.ROOM_READIED) {
+				if (eventSystem.currentSelectedGameObject == null) { 
+					UISet.input_chat.Select();
+				} else if (eventSystem.currentSelectedGameObject.name.Equals (UISet.input_chat.name)) {
 					UISet.Ebtn_chatenter ();
+				} else {
+					UISet.input_chat.Select();
 				}
 			}
+		}
+	}
+	void UIChatUpdateProcessing() {
+		if (!chatUpdateFlag) { return; }
+		chatUpdateFlag = false;
+		UISet.txt_chatlog.text = StructManager.myRoomInfo.chatLog;
+	}
+	void UIRoomUpdateProcessing() {
+		if (!roomUpdateFlag) { return; }
+		roomUpdateFlag = false;
+
+		UISet.SetUILock(false);
+		UISet.ActiveUI (UISet.UIState.ROOM_READIED);
+
+		string roomInfo = "방 번호: ";
+		roomInfo += StructManager.myRoomInfo.roomNumber.ToString () + "\n\n";
+		if (StructManager.myRoomInfo.isPublic) {
+			roomInfo += "공개방\n";
+		} else {
+			roomInfo += "비밀방\n";
+		}
+		roomInfo += "인원: ";
+		roomInfo += StructManager.myRoomInfo.totalNumber.ToString () + " / ";
+		roomInfo += StructManager.myRoomInfo.maximumNumber.ToString () + "\n";
+		roomInfo += "방 개설자: ";
+		roomInfo += StructManager.myRoomInfo.owner.id + "\n";
+		UISet.txt_roominfo.text = roomInfo;
+
+		for(int i=0; i<StructManager.myRoomInfo.users.Count; i++) {
+			UISet.Players[i].transform.GetChild(0).GetComponent<Text>().text = StructManager.myRoomInfo.users[i].id;
+			Debug.Log (StructManager.myRoomInfo.users[i].id);
 		}
 	}
 }

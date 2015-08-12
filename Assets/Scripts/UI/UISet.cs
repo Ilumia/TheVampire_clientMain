@@ -3,14 +3,7 @@ using UnityEngine.UI;
 using System.Collections;
 
 public class UISet : MonoBehaviour {
-	private static UISet uiSet;
-	public static UISet GetSet() {
-		if(uiSet == null) {
-			uiSet = new UISet();
-		}
-		return uiSet;
-	}
-
+	public static bool uiLock;
 	public static Communication comm;
 
 	public enum UIState { MAIN_SELECT, MAIN_LOGIN, LOBBY_CREATEROOM, 
@@ -58,88 +51,119 @@ public class UISet : MonoBehaviour {
 
 	// SelectMode
 	public static void Ebtn_solo() {
-
+		if (uiLock) { return; }
 	}
 	public static void Ebtn_multi() {
+		if (uiLock) { return; }
 		comm = Communication.GetCommunication();
 		ActiveUI (UIState.MAIN_LOGIN);
 	}
 	// Login
 	public static void Einput_email<String>(String str) {
+		if (uiLock) { return; }
 		
 	}
 	public static void Einput_password<String>(String str) {
+		if (uiLock) { return; }
 		
 	}
 	public static void Etoggle_remember(bool check) {
+		if (uiLock) { return; }
 		
 	}
 	public static void Etoggle_autologin(bool check) {
+		if (uiLock) { return; }
 		
 	}
 	public static void Ebtn_signup() {
+		if (uiLock) { return; }
 		string email = input_email.text;
 		string password = input_password.text;
 		comm.SendMessageToServer ('I', email + " " + password);
+		UISet.SetUILock(true);
 	}
 	public static void Ebtn_cancel() {
+		if (uiLock) { return; }
 		input_email.text = "";
 		input_password.text = "";
 		ActiveUI (UIState.MAIN_SELECT);
 	}
 	public static void Ebtn_login() {
+		if (uiLock) { return; }
 		string email = input_email.text;
 		string password = input_password.text;
 		comm.SendMessageToServer ('A', email + " " + password);
+		UISet.SetUILock(true);
 	}
 	// Lobby
 	public static void Ebtn_randomenter() {
+		if (uiLock) { return; }
 		comm.SendMessageToServer ('F', "");
+		UISet.SetUILock(true);
 		// UI통제 필요
 	}
 	public static void Ebtn_createroom() {
+		if (uiLock) { return; }
 		ActiveUI (UIState.LOBBY_CREATEROOM);
 	}
 	public static void Ebtn_friends() {
+		if (uiLock) { return; }
 		
 	}
 	public static void Ebtn_exit() {
+		if (uiLock) { return; }
 		ActiveUI (UIState.MAIN_LOGIN);
 	}
 	public static void Ebtn_listup() {
+		if (uiLock) { return; }
 		
 	}
 	public static void Ebtn_listdown() {
+		if (uiLock) { return; }
 		
 	}
 	// CreateRoom
 	public static void Eslider_number(float param) {
+		if (uiLock) { return; }
 		txt_numbercount.text = Mathf.Round (param).ToString ();
 	}
 	public static void Etoggle_public(bool check) {
+		if (uiLock) { return; }
 		
 	}
 	public static void Ebtn_createconfirm() {
+		if (uiLock) { return; }
 		string maxNum = slider_number.value.ToString ();
 		string isPublc;
 		if(toggle_public) { isPublc = "t"; }
 		else { isPublc = "f"; }
 		comm.SendMessageToServer ('C', maxNum + " " + isPublc);
+		UISet.SetUILock(true);
 	}
 	public static void Ebtn_createcancel() {
+		if (uiLock) { return; }
 		ActiveUI (UIState.LOBBY_LOBBY);
 	}
 	// ReadiedRoom
 	public static void EPlayers() {
+		if (uiLock) { return; }
 		// player 확인 필요
 	}
 	public static void Escroll_chat(float value) {
+		if (uiLock) { return; }
 
 	}
 	public static void Ebtn_chatenter() {
-
+		if (uiLock) { return; }
+		if(input_chat.text == null || input_chat.text.Equals("")) { return; }
+		comm.SendMessageToServer ('G', input_chat.text);
+		input_chat.text = "";
+		input_chat.Select ();
 	}
 	
+	public static void SetUILock(bool check) {
+		uiLock = check;
+	}
 	public static void InactiveUI() {
 		
 		Main.SetActive (false);

@@ -8,6 +8,7 @@ public struct RoomInfo {
 	public List<Player> users;
 	public Player owner;
 	public int roomState;   // -1: 시작 전, 0: 게임종료, 1이상의 양수: 진행회차
+	public string chatLog;
 
 	public RoomInfo(int _roomNumber, int _totalNumber, int _maximumNumber) {
 		roomNumber = _roomNumber;
@@ -17,6 +18,7 @@ public struct RoomInfo {
 		users = null;
 		owner = new Player ();
 		roomState = -1;
+		chatLog = "";
 	}
 	public void RoomInfoUpdate(int _totalNumber, int _maximumNumber, bool _isPublic, List<Player> _users) {
 		totalNumber = _totalNumber;
