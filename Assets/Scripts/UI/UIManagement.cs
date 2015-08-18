@@ -11,6 +11,7 @@ public class UIManagement : MonoBehaviour {
 	public static List<string> UIRoomList;
 	public static bool chatUpdateFlag;
 	public static bool roomUpdateFlag;
+	private int frameCounter;
 
 	void Awake () {
 		eventSystem = EventSystem.current;
@@ -19,6 +20,7 @@ public class UIManagement : MonoBehaviour {
 		UIRoomList = new List<string> ();
 		roomUpdateFlag = false;
 		chatUpdateFlag = true;
+		frameCounter = 0;
 
 		// Initialize UI Set
 		// *Main
@@ -69,6 +71,9 @@ public class UIManagement : MonoBehaviour {
 		// Caution
 		UISet.Caution = GameObject.Find("Caution");
 		UISet.txt_caution = GameObject.Find("txt_caution").GetComponent<Text>();
+		// Loading
+		UISet.Loading = GameObject.Find ("Loading");
+		UISet.img_loadcircle = GameObject.Find ("img_loadcircle").GetComponent<Image> ();
 		
 		// Initialize click event
 		// SelectMode
@@ -110,6 +115,7 @@ public class UIManagement : MonoBehaviour {
 		UIEnterProcessing ();
 		UIChatUpdateProcessing ();
 		UIRoomUpdateProcessing ();
+		UILoadingProcessing ();
 	}
 	void UIEventProcessing() {
 		if (UIEventList.Count == 0) {
@@ -186,6 +192,16 @@ public class UIManagement : MonoBehaviour {
 		for(int i=0; i<StructManager.myRoomInfo.users.Count; i++) {
 			UISet.Players[i].transform.GetChild(0).GetComponent<Text>().text = StructManager.myRoomInfo.users[i].id;
 			Debug.Log (StructManager.myRoomInfo.users[i].id);
+		}
+	}
+	void UILoadingProcessing() {
+		if (frameCounter != 2) {
+			frameCounter++;
+			return;
+		}
+		frameCounter = 0;
+		if (UISet.Loading.activeInHierarchy) {
+			UISet.img_loadcircle.transform.Rotate(Vector3.back, 30.0f);
 		}
 	}
 }

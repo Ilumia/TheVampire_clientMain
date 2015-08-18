@@ -46,8 +46,8 @@ public class UISet : MonoBehaviour {
 	public static Button btn_chatenter;
 	public static GameObject Caution;			// Caution
 	public static Text txt_caution;
-
-
+	public static GameObject Loading;			// Loading
+	public static Image img_loadcircle;
 
 	// SelectMode
 	public static void Ebtn_solo() {
@@ -92,6 +92,17 @@ public class UISet : MonoBehaviour {
 		if (uiLock) { return; }
 		string email = input_email.text;
 		string password = input_password.text;
+
+		if (toggle_remember.isOn && toggle_autologin.isOn) {
+			FileSystem.WritePasswordConfig (email, password);
+		} else if (!toggle_remember.isOn && !toggle_autologin.isOn) {
+			FileSystem.WritePasswordConfig ();
+		} else if (toggle_remember.isOn) {
+			FileSystem.WriteEmailConfig (email);
+		} else if (!toggle_remember.isOn) {
+			FileSystem.WriteEmailConfig ();
+		} 
+
 		comm.SendMessageToServer ('A', email + " " + password);
 		UISet.SetUILock(true);
 	}
@@ -100,7 +111,6 @@ public class UISet : MonoBehaviour {
 		if (uiLock) { return; }
 		comm.SendMessageToServer ('F', "");
 		UISet.SetUILock(true);
-		// UI통제 필요
 	}
 	public static void Ebtn_createroom() {
 		if (uiLock) { return; }
@@ -163,20 +173,22 @@ public class UISet : MonoBehaviour {
 	
 	public static void SetUILock(bool check) {
 		uiLock = check;
+		if (check) {
+			Loading.SetActive (true);
+		} else {
+			Loading.SetActive (false);
+		}
 	}
 	public static void InactiveUI() {
-		
 		Main.SetActive (false);
 		Set_SelectMode.SetActive (false);
 		Set_Login.SetActive (false);
-		
 		Lobby.SetActive (false);
 		Set_Lobby.SetActive (false);
 		Set_CreateRoom.SetActive (false);
-
 		Room.SetActive (false);
-		
 		Caution.SetActive (false);
+		Loading.SetActive (false);
 	}
 	public static void ActiveUI (UIState state) {
 		UIManagement.UIEventList.Add (state);
@@ -193,6 +205,14 @@ public class UISet : MonoBehaviour {
 			Main.SetActive(true);
 			Set_Login.SetActive(true);
 			input_email.Select();
+			toggle_remember.isOn = GlobalConfig.isEmailRemember;
+			toggle_autologin.isOn = GlobalConfig.isAutoLogin;
+			if(GlobalConfig.email != null) {
+				input_email.text = GlobalConfig.email;
+			}
+			if(GlobalConfig.password != null) {
+				input_password.text = GlobalConfig.password;
+			}
 			uiState = UIState.MAIN_LOGIN;
 			StructManager.roomListIndex = 0;
 			break;

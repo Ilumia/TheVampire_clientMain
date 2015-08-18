@@ -18,7 +18,7 @@ public partial class Communication {
 	public Communication()
 	{
 		socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-		IPEndPoint _ipep = new IPEndPoint(IPAddress.Parse("192.168.0.5"), 8000);
+		IPEndPoint _ipep = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 8000);
 		
 		SocketAsyncEventArgs _args = new SocketAsyncEventArgs();
 		_args.RemoteEndPoint = _ipep;
@@ -109,5 +109,8 @@ public partial class Communication {
 			Debug.Log("Connection Failed!");
 			m_Client = null;
 		}
+	}
+	public void Disconnect() {
+		socket.Close();
 	}
 }
