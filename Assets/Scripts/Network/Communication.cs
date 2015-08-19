@@ -6,17 +6,18 @@ using UnityEngine;
 
 public partial class Communication {
 	private Socket m_Client = null;
-	private static Communication comm = new Communication();
-	private static Socket socket = null;
-	public static Communication GetCommunication() {
+	private Socket socket = null;
+	private static Communication comm;
+	public static Communication Instance() {
 		if (comm == null) {
 			comm = new Communication();
 		}
 		return comm;
 	}
 
-	public Communication()
+	private Communication()
 	{
+		Debug.Log ("start socket!");
 		socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 		IPEndPoint _ipep = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 8000);
 		
@@ -111,6 +112,9 @@ public partial class Communication {
 		}
 	}
 	public void Disconnect() {
-		socket.Close();
+		this.socket.Close();
+	}
+	public Socket GetSocket() {
+		return this.socket;
 	}
 }

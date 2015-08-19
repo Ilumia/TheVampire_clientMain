@@ -55,7 +55,6 @@ public class UISet : MonoBehaviour {
 	}
 	public static void Ebtn_multi() {
 		if (uiLock) { return; }
-		comm = Communication.GetCommunication();
 		ActiveUI (UIState.MAIN_LOGIN);
 	}
 	// Login
@@ -90,6 +89,7 @@ public class UISet : MonoBehaviour {
 	}
 	public static void Ebtn_login() {
 		if (uiLock) { return; }
+		comm = Communication.Instance();
 		string email = input_email.text;
 		string password = input_password.text;
 
