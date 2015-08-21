@@ -10,8 +10,6 @@ public class GlobalConfig : MonoBehaviour {
 	public static string email;
 	public static string password;
 
-	private bool allowQuitting = false;
-
 	void Awake () {
 		FileSystem.ReadConfig ();
 	}

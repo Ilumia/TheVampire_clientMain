@@ -7,6 +7,7 @@ using System.Collections.Generic;
 public class UIManagement : MonoBehaviour {
 	public static EventSystem eventSystem;
 	public static List<UISet.UIState> UIEventList;
+	public static List<bool> UILockList;
 	public static List<string> UICautionList;
 	public static List<string> UIRoomList;
 	public static bool chatUpdateFlag;
@@ -16,6 +17,7 @@ public class UIManagement : MonoBehaviour {
 	void Awake () {
 		eventSystem = EventSystem.current;
 		UIEventList = new List<UISet.UIState> ();
+		UILockList = new List<bool> ();
 		UICautionList = new List<string> ();
 		UIRoomList = new List<string> ();
 		roomUpdateFlag = false;
@@ -68,6 +70,11 @@ public class UIManagement : MonoBehaviour {
 		UISet.input_chat = GameObject.Find ("input_chat").GetComponent<InputField> ();
 		UISet.scroll_chat = GameObject.Find ("scroll_chat").GetComponent<Scrollbar> ();
 		UISet.btn_chatenter = GameObject.Find ("btn_chatenter").GetComponent<Button> ();
+		UISet.btn_roomready = GameObject.Find ("btn_roomready").GetComponent<Button> ();
+		UISet.btn_roompublic = GameObject.Find ("btn_roompublic").GetComponent<Button>();
+		UISet.btn_roomconfig = GameObject.Find ("btn_roomconfig").GetComponent<Button>();
+		UISet.btn_roominvite = GameObject.Find ("btn_roominvite").GetComponent<Button>();
+		UISet.btn_roomexit = GameObject.Find ("btn_roomexit").GetComponent<Button>();
 		// Caution
 		UISet.Caution = GameObject.Find("Caution");
 		UISet.txt_caution = GameObject.Find("txt_caution").GetComponent<Text>();
@@ -102,7 +109,12 @@ public class UIManagement : MonoBehaviour {
 		}
 		UISet.scroll_chat.onValueChanged.AddListener (UISet.Escroll_chat);
 		UISet.btn_chatenter.onClick.AddListener (UISet.Ebtn_chatenter);
-		
+		UISet.btn_roomready.onClick.AddListener (UISet.Ebtn_roomready);
+		UISet.btn_roompublic.onClick.AddListener (UISet.Ebtn_roompublic);
+		UISet.btn_roomconfig.onClick.AddListener (UISet.Ebtn_roomconfig);
+		UISet.btn_roominvite.onClick.AddListener (UISet.Ebtn_roominvite);
+		UISet.btn_roomexit.onClick.AddListener (UISet.Ebtn_roomexit);
+
 		UISet.ActiveUI (UISet.UIState.MAIN_SELECT);
 
 	}
@@ -110,6 +122,7 @@ public class UIManagement : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		UIEventProcessing ();
+		UILockProcessing ();
 		UICautionProcessing ();
 		UITabProcessing ();
 		UIEnterProcessing ();
@@ -123,6 +136,13 @@ public class UIManagement : MonoBehaviour {
 		}
 		UISet.ActiveUI_ (UIEventList [0]);
 		UIEventList.RemoveAt (0);
+	}
+	void UILockProcessing() {
+		if (UILockList.Count == 0) {
+			return;
+		}
+		UISet.SetUILock_ (UILockList [0]);
+		UILockList.RemoveAt (0);
 	}
 	void UICautionProcessing() {
 		if (UISet.Caution.activeSelf) {

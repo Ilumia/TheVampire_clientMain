@@ -5,12 +5,9 @@ using UnityEngine;
 public class FileSystem {
 	private static string path = Application.persistentDataPath + "/.config";
 	public static void ReadConfig() {
-		bool errorCheck = false;
 		if (!File.Exists (path)) {
 			CreateConfig();
 		}
-		Debug.Log (path);
-
 		try {
 			string _config = File.ReadAllText(path);
 			string[] config = _config.Split('$');
@@ -33,14 +30,6 @@ public class FileSystem {
 			Debug.Log (e.StackTrace);
 		} catch(Exception e) {
 			Debug.Log (e.StackTrace);
-		}
-		Debug.Log (GlobalConfig.musicSound + ", " + GlobalConfig.effectSound + ", " + 
-		           GlobalConfig.isEmailRemember + "," + GlobalConfig.isAutoLogin);
-		if (GlobalConfig.email != null) {
-			Debug.Log (GlobalConfig.email);
-		}
-		if (GlobalConfig.password != null) {
-			Debug.Log (GlobalConfig.password);
 		}
 	}
 	public static void CreateConfig() {

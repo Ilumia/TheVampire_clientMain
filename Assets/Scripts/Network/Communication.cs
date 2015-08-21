@@ -26,7 +26,6 @@ public partial class Communication {
 		_args.Completed += new EventHandler<SocketAsyncEventArgs>(Connect_Completed);
 		
 		socket.ConnectAsync(_args);
-
 	}
 
 	public void SendMessageToServer(char type, String data) {
@@ -35,9 +34,7 @@ public partial class Communication {
 		{
 			if (!m_Client.Connected)
 			{
-				m_Client = null;
-				Console.WriteLine("Connection Failed!");
-				Console.WriteLine("Press Any Key...");
+				DisconnectProcessing();
 			}
 			else
 			{
@@ -69,9 +66,7 @@ public partial class Communication {
 		}
 		else
 		{
-			m_Client = null;
-			Debug.Log("Connection Failed!");
-			Debug.Log("Press Any Key...");
+			DisconnectProcessing();
 		}
 	}
 	private void Send_Completed(object sender, SocketAsyncEventArgs e)
@@ -87,10 +82,7 @@ public partial class Communication {
 		Socket _client = (Socket)sender;
 		Message message = (Message)e.UserToken;
 		message.InitRecvPacket(e.Buffer);
-		if (message.Length > 0)
-		{
-			byte[] data = Compression.DecompressToBytes(message.Data);
-		}
+
 		if (_client.Connected)
 		{
 			_client.Receive(message.DataBuffer, message.Length, SocketFlags.None);
@@ -107,9 +99,21 @@ public partial class Communication {
 		}
 		else
 		{
-			Debug.Log("Connection Failed!");
-			m_Client = null;
+			DisconnectProcessing();
 		}
+	}
+	public void DisconnectProcessing() {
+		m_Client = null;
+		Debug.Log("Connection Failed!");
+		socket.Close();
+		socket = null;
+		comm = null;
+		GC.Collect();
+		
+		UISet.SetUILock(false);
+		UISet.ActiveUI(UISet.UIState.MAIN_SELECT);
+		UISet.ActiveUI(UISet.UIState.CAUTION);
+		UISet.SetCaution("서버에 연결할 수 없습니다");
 	}
 	public void Disconnect() {
 		this.socket.Close();

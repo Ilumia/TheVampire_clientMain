@@ -10,6 +10,8 @@ public class UISet : MonoBehaviour {
 		LOBBY_LOBBY, ROOM_READIED, CAUTION};
 	public static UIState uiState;
 
+	private static bool autoLoginFlag;
+
 	public static GameObject Main;				// Main
 	public static GameObject Set_SelectMode;	// SelectMode Set
 	public static Button btn_solo;
@@ -44,6 +46,11 @@ public class UISet : MonoBehaviour {
 	public static InputField input_chat;
 	public static Scrollbar scroll_chat;
 	public static Button btn_chatenter;
+	public static Button btn_roomready;
+	public static Button btn_roomexit;
+	public static Button btn_roominvite;
+	public static Button btn_roomconfig;
+	public static Button btn_roompublic;
 	public static GameObject Caution;			// Caution
 	public static Text txt_caution;
 	public static GameObject Loading;			// Loading
@@ -170,8 +177,26 @@ public class UISet : MonoBehaviour {
 		input_chat.text = "";
 		input_chat.Select ();
 	}
-	
+	public static void Ebtn_roomready() {
+		
+	}
+	public static void Ebtn_roompublic() {
+		
+	}
+	public static void Ebtn_roomconfig() {
+		
+	}
+	public static void Ebtn_roominvite() {
+		
+	}
+	public static void Ebtn_roomexit() {
+
+	}
+
 	public static void SetUILock(bool check) {
+		UIManagement.UILockList.Add (check);
+	}
+	public static void SetUILock_(bool check) {
 		uiLock = check;
 		if (check) {
 			Loading.SetActive (true);
@@ -200,6 +225,7 @@ public class UISet : MonoBehaviour {
 			Main.SetActive(true);
 			Set_SelectMode.SetActive(true);
 			uiState = UIState.MAIN_SELECT;
+			autoLoginFlag = true;
 			break;
 		case UIState.MAIN_LOGIN:
 			Main.SetActive(true);
@@ -213,8 +239,12 @@ public class UISet : MonoBehaviour {
 			if(GlobalConfig.password != null) {
 				input_password.text = GlobalConfig.password;
 			}
+			if(GlobalConfig.isAutoLogin) {
+				if(autoLoginFlag) {
+					Ebtn_login();
+				}
+			}
 			uiState = UIState.MAIN_LOGIN;
-			StructManager.roomListIndex = 0;
 			break;
 		case UIState.LOBBY_LOBBY:
 			Lobby.SetActive(true);
