@@ -35,7 +35,7 @@ public partial class Communication {
 	private void LoginProc(string data) {
 		if (data.Equals ("s")) {
 			UISet.ActiveUI (UISet.UIState.LOBBY_LOBBY);
-			StructManager.user = new User(UISet.input_email.text);
+			StructManager.user = new UserInfo(UISet.input_email.text);
 		} else if (data.Equals ("f")) {
 			UISet.ActiveUI (UISet.UIState.CAUTION);
 			UISet.SetCaution("로그인에 실패했습니다. \n아이디나 비밀번호를 확인하세요");

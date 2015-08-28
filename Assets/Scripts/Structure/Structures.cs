@@ -30,22 +30,16 @@ public struct RoomInfo {
 }
 
 public enum PlayerState { UNSET, TURN_ON, TURN_OFF, DROPPED };
-public enum PlayerJob { UNSET, VAMPIRE };
+public enum PlayerJob { UNSET, VAMPIRE, HUNTER };
 public struct Player {
 	public string id;
 	public PlayerJob job;
 	public PlayerState state;
-	public int item1;
-	public int item2;
-	public int item3;
 	public bool isAI;
 	public Player(string id) {
 		this.id = id;
 		job = PlayerJob.UNSET;
 		state = PlayerState.UNSET;
-		item1 = 0;
-		item2 = 0;
-		item3 = 0;
 		isAI = false;
 	}
 	public void InitPlayer(PlayerJob job, bool isAI) {
@@ -64,9 +58,52 @@ public struct Player {
             */
 	}
 }
-public struct User {
+public struct UserInfo {
 	public string id;
-	public User (string _id) {
+	public Dictionary<int, AbilityInfo> ability;
+	public Card cards;
+	public UserInfo (string _id) {
 		id = _id;
+		ability = null;
+		cards = new Card ();
 	}
+}
+public struct AbilityInfo {
+	string abilityName;
+	PlayerJob jobClass;
+	float effect;
+	string description;
+}
+public struct Card {
+	Dictionary<int, InfoCard> infoCardSet;
+	Dictionary<int, BattleCard> battleCardSet;
+	public void SetCards (Dictionary<int, InfoCard> _infoCardSet) {
+		infoCardSet = _infoCardSet;
+	}
+	public void SetCards (Dictionary<int, BattleCard> _battleCardSet) {
+		battleCardSet = _battleCardSet;
+	}
+	public void SetCards (Dictionary<int, InfoCard> _infoCardSet, Dictionary<int, BattleCard> _battleCardSet) {
+		infoCardSet = _infoCardSet;
+		battleCardSet = _battleCardSet;
+	}
+}
+public struct InfoCard {
+	string cardName;
+	int grade;
+	float pickRate;
+	float cuccessRate;
+	float upgrade;
+	string description;
+	string note;
+}
+public struct BattleCard {
+	string cardName;
+	int grade;
+	float effect;
+	float pickRate;
+	float cuccessRate;
+	float upgrade;
+	string description;
+	string note;
 }

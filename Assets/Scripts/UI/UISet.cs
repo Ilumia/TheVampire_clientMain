@@ -190,7 +190,8 @@ public class UISet : MonoBehaviour {
 		
 	}
 	public static void Ebtn_roomexit() {
-
+		comm.SendMessageToServer ('H', StructManager.myRoomInfo.roomNumber.ToString());
+		UISet.ActiveUI (UISet.UIState.LOBBY_LOBBY);
 	}
 
 	public static void SetUILock(bool check) {
