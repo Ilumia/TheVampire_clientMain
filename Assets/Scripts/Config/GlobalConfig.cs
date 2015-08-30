@@ -14,7 +14,7 @@ public class GlobalConfig : MonoBehaviour {
 
 	void Awake () {
 		FileSystem.ReadConfig ();
-		CardSetInterpreter.ReadSet ();
+		ItemSetInterpreter.ReadSet ();
 	}
 
 	void Update() {

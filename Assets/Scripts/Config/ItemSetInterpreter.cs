@@ -4,8 +4,8 @@ using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 
-public class CardSetInterpreter {
-	private static string path = Application.persistentDataPath + "/.cardset";
+public class ItemSetInterpreter {
+	private static string path = Application.persistentDataPath + "/.itemset";
 
 	public static void ReadSet() {
 		if (!File.Exists (path)) {
