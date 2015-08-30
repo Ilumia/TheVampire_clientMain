@@ -29,7 +29,7 @@ public struct RoomInfo {
 
 }
 
-public enum PlayerState { UNSET, TURN_ON, TURN_OFF, DROPPED };
+public enum PlayerState { UNSET, TURN_ON, TURN_OFF, DEFEATED };
 public enum PlayerJob { UNSET, VAMPIRE, HUNTER };
 public struct Player {
 	public string id;
@@ -60,50 +60,55 @@ public struct Player {
 }
 public struct UserInfo {
 	public string id;
-	public Dictionary<int, AbilityInfo> ability;
-	public Card cards;
+	public Item item;
 	public UserInfo (string _id) {
 		id = _id;
-		ability = null;
-		cards = new Card ();
+		item = new Item ();
 	}
 }
-public struct AbilityInfo {
-	string abilityName;
-	PlayerJob jobClass;
-	float effect;
-	string description;
-}
-public struct Card {
-	Dictionary<int, InfoCard> infoCardSet;
-	Dictionary<int, BattleCard> battleCardSet;
-	public void SetCards (Dictionary<int, InfoCard> _infoCardSet) {
+public struct Item {
+	public Dictionary<int, Ability> abilitySet;
+	public Dictionary<int, InfoCard> infoCardSet;
+	public Dictionary<int, BattleCard> battleCardSet;
+	public void SetItem (Dictionary<int, Ability> _abilitySet) {
+		abilitySet = _abilitySet;
+	}
+	public void SetItem (Dictionary<int, InfoCard> _infoCardSet) {
 		infoCardSet = _infoCardSet;
 	}
-	public void SetCards (Dictionary<int, BattleCard> _battleCardSet) {
+	public void SetItem (Dictionary<int, BattleCard> _battleCardSet) {
 		battleCardSet = _battleCardSet;
 	}
-	public void SetCards (Dictionary<int, InfoCard> _infoCardSet, Dictionary<int, BattleCard> _battleCardSet) {
+	public void SetItem (Dictionary<int, Ability> _abilitySet, Dictionary<int, InfoCard> _infoCardSet, Dictionary<int, BattleCard> _battleCardSet) {
+		abilitySet = _abilitySet;
 		infoCardSet = _infoCardSet;
 		battleCardSet = _battleCardSet;
 	}
+}
+public struct Ability {
+	public string abilityName;
+	public PlayerJob jobClass;
+	public float effect;
+	public float effectFactor;
+	public string description;
 }
 public struct InfoCard {
-	string cardName;
-	int grade;
-	float pickRate;
-	float cuccessRate;
-	float upgrade;
-	string description;
-	string note;
+	public string cardName;
+	public string grade;
+	public float pickRate;
+	public float cuccessRate;
+	public float upgrade;
+	public string description;
+	public string note;
 }
 public struct BattleCard {
-	string cardName;
-	int grade;
-	float effect;
-	float pickRate;
-	float cuccessRate;
-	float upgrade;
-	string description;
-	string note;
+	public string cardName;
+	public string grade;
+	public float effect;
+	public float effectFactor;
+	public float pickRate;
+	public float cuccessRate;
+	public float upgrade;
+	public string description;
+	public string note;
 }
