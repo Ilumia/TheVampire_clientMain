@@ -10,7 +10,7 @@ public class GlobalConfig : MonoBehaviour {
 	public static bool isAutoLogin;
 	public static string email;
 	public static string password;
-	public static int cardSetVersion;
+	public static int itemDataVersion;
 
 	void Awake () {
 		FileSystem.ReadConfig ();

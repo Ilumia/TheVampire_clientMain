@@ -33,13 +33,21 @@ public partial class Communication {
 	}
 
 	private void LoginProc(string data) {
-		if (data.Equals ("s")) {
-			UISet.ActiveUI (UISet.UIState.LOBBY_LOBBY);
-			StructManager.user = new UserInfo(UISet.input_email.text);
-		} else if (data.Equals ("f")) {
+		if (data.Equals ("f")) {
 			UISet.ActiveUI (UISet.UIState.CAUTION);
 			UISet.SetCaution("로그인에 실패했습니다. \n아이디나 비밀번호를 확인하세요");
-		}
+		} else {
+			int itemVersion;
+			Int32.TryParse(data, out itemVersion);
+			Debug.Log ("server: " + itemVersion + ", client: " + GlobalConfig.itemDataVersion);
+			if(itemVersion != GlobalConfig.itemDataVersion) {
+				UISet.ActiveUI (UISet.UIState.CAUTION);
+				UISet.SetCaution("업데이트중입니다.");
+			} else {
+				UISet.ActiveUI (UISet.UIState.LOBBY_LOBBY);
+				StructManager.user = new UserInfo(UISet.input_email.text);
+			}
+		} 
 		UISet.SetUILock(false);
 	}
 	private void RoomCreateProc(string data) {

@@ -19,7 +19,7 @@ public class ItemSetInterpreter {
 			Dictionary<int, InfoCard> infoCardSet = new Dictionary<int, InfoCard>();
 			Dictionary<int, BattleCard> battleCardSet = new Dictionary<int, BattleCard>();
 
-			Int32.TryParse(cardSet[0], out GlobalConfig.cardSetVersion);
+			Int32.TryParse(cardSet[0], out GlobalConfig.itemDataVersion);
 			int i = 2;
 			for(; i < cardSet.Length; i++) {
 				if(!cardSet[i].Equals("$information")) {
