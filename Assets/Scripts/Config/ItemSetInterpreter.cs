@@ -5,7 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class ItemSetInterpreter {
-	private static string path = Application.persistentDataPath + "/.itemset";
+	public static string path = Application.persistentDataPath + "/.itemset";
 
 	public static void ReadSet() {
 		if (!File.Exists (path)) {

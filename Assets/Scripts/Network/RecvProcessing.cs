@@ -3,6 +3,7 @@ using System;
 using System.Text;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 
 public partial class Communication {
 	private void ReceiveProcessing(byte type, byte[] data) {
@@ -29,6 +30,9 @@ public partial class Communication {
 		case 'g':
 			SignUpProc(_data);
 			break;
+		case 'w':
+			ItemListProc(_data);
+			break;
 		}
 	}
 
@@ -36,19 +40,21 @@ public partial class Communication {
 		if (data.Equals ("f")) {
 			UISet.ActiveUI (UISet.UIState.CAUTION);
 			UISet.SetCaution("로그인에 실패했습니다. \n아이디나 비밀번호를 확인하세요");
+			UISet.SetUILock(false);
 		} else {
 			int itemVersion;
 			Int32.TryParse(data, out itemVersion);
 			Debug.Log ("server: " + itemVersion + ", client: " + GlobalConfig.itemDataVersion);
 			if(itemVersion != GlobalConfig.itemDataVersion) {
 				UISet.ActiveUI (UISet.UIState.CAUTION);
-				UISet.SetCaution("업데이트중입니다.");
+				UISet.SetCaution("업데이트를 시작합니다.\n잠시 기다려주세요");
+				SendMessageToServer('V', "");
 			} else {
 				UISet.ActiveUI (UISet.UIState.LOBBY_LOBBY);
 				StructManager.user = new UserInfo(UISet.input_email.text);
+				UISet.SetUILock(false);
 			}
-		} 
-		UISet.SetUILock(false);
+		}
 	}
 	private void RoomCreateProc(string data) {
 		if (data.Equals ("s")) {
@@ -108,6 +114,11 @@ public partial class Communication {
 			UISet.ActiveUI (UISet.UIState.CAUTION);
 			UISet.SetCaution("이미 가입된 이메일입니다.");
 		}
+		UISet.SetUILock(false);
+	}
+	private void ItemListProc(string data) {
+		File.WriteAllText (ItemSetInterpreter.path, data);
+		ItemSetInterpreter.ReadSet ();
 		UISet.SetUILock(false);
 	}
 }
