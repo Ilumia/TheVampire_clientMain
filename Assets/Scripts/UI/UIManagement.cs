@@ -59,7 +59,7 @@ public class UIManagement : MonoBehaviour {
 		UISet.Room = GameObject.Find ("Room");
 		// ReadiedRoom
 		UISet.Set_ReadiedRoom = GameObject.Find ("Set_ReadiedRoom");
-		UISet.Players = new Button[14];
+		UISet.Players = new Button[4];
 		for (int i=0; i<UISet.Players.Length; i++) {
 			UISet.Players[i] = GameObject.Find("Player (" + i + ")").GetComponent<Button>();
 		}
@@ -68,7 +68,6 @@ public class UIManagement : MonoBehaviour {
 		UISet.txt_roominfo = GameObject.Find ("txt_roominfo").GetComponent<Text> ();
 		UISet.txt_chatlog = GameObject.Find ("txt_chatlog").GetComponent<Text> ();
 		UISet.input_chat = GameObject.Find ("input_chat").GetComponent<InputField> ();
-		UISet.scroll_chat = GameObject.Find ("scroll_chat").GetComponent<Scrollbar> ();
 		UISet.btn_chatenter = GameObject.Find ("btn_chatenter").GetComponent<Button> ();
 		UISet.btn_roomready = GameObject.Find ("btn_roomready").GetComponent<Button> ();
 		UISet.btn_roompublic = GameObject.Find ("btn_roompublic").GetComponent<Button>();
@@ -107,7 +106,6 @@ public class UIManagement : MonoBehaviour {
 		foreach (Button player in UISet.Players) {
 			player.onClick.AddListener(UISet.EPlayers);
 		}
-		UISet.scroll_chat.onValueChanged.AddListener (UISet.Escroll_chat);
 		UISet.btn_chatenter.onClick.AddListener (UISet.Ebtn_chatenter);
 		UISet.btn_roomready.onClick.AddListener (UISet.Ebtn_roomready);
 		UISet.btn_roompublic.onClick.AddListener (UISet.Ebtn_roompublic);

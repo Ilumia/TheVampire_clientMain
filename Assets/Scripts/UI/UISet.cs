@@ -44,7 +44,6 @@ public class UISet : MonoBehaviour {
 	public static Text txt_roominfo;
 	public static Text txt_chatlog;
 	public static InputField input_chat;
-	public static Scrollbar scroll_chat;
 	public static Button btn_chatenter;
 	public static Button btn_roomready;
 	public static Button btn_roomexit;
