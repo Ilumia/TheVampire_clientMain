@@ -59,21 +59,21 @@ public class UIManagement : MonoBehaviour {
 		UISet.Room = GameObject.Find ("Room");
 		// ReadiedRoom
 		UISet.Set_ReadiedRoom = GameObject.Find ("Set_ReadiedRoom");
+		UISet.txt_profile = GameObject.Find ("txt_profile").GetComponent<Text> ();
+		UISet.txt_roominfo = GameObject.Find ("txt_roominfo").GetComponent<Text> ();
+		UISet.btn_roomready = GameObject.Find ("btn_roomready").GetComponent<Button> ();
+		UISet.btn_roompublic = GameObject.Find ("btn_roompublic").GetComponent<Button>();
+		UISet.btn_roominvite = GameObject.Find ("btn_roominvite").GetComponent<Button>();
+		UISet.btn_roomexit = GameObject.Find ("btn_roomexit").GetComponent<Button>();
+		UISet.Set_StartedRoom = GameObject.Find ("Set_StartedRoom");
 		UISet.Players = new Button[4];
 		for (int i=0; i<UISet.Players.Length; i++) {
 			UISet.Players[i] = GameObject.Find("Player (" + i + ")").GetComponent<Button>();
 		}
 		UISet.img_profile = GameObject.Find ("img_profile").GetComponent<Image> ();
-		UISet.txt_profile = GameObject.Find ("txt_profile").GetComponent<Text> ();
-		UISet.txt_roominfo = GameObject.Find ("txt_roominfo").GetComponent<Text> ();
 		UISet.txt_chatlog = GameObject.Find ("txt_chatlog").GetComponent<Text> ();
 		UISet.input_chat = GameObject.Find ("input_chat").GetComponent<InputField> ();
 		UISet.btn_chatenter = GameObject.Find ("btn_chatenter").GetComponent<Button> ();
-		UISet.btn_roomready = GameObject.Find ("btn_roomready").GetComponent<Button> ();
-		UISet.btn_roompublic = GameObject.Find ("btn_roompublic").GetComponent<Button>();
-		UISet.btn_roomconfig = GameObject.Find ("btn_roomconfig").GetComponent<Button>();
-		UISet.btn_roominvite = GameObject.Find ("btn_roominvite").GetComponent<Button>();
-		UISet.btn_roomexit = GameObject.Find ("btn_roomexit").GetComponent<Button>();
 		// Caution
 		UISet.Caution = GameObject.Find("Caution");
 		UISet.txt_caution = GameObject.Find("txt_caution").GetComponent<Text>();
@@ -109,7 +109,6 @@ public class UIManagement : MonoBehaviour {
 		UISet.btn_chatenter.onClick.AddListener (UISet.Ebtn_chatenter);
 		UISet.btn_roomready.onClick.AddListener (UISet.Ebtn_roomready);
 		UISet.btn_roompublic.onClick.AddListener (UISet.Ebtn_roompublic);
-		UISet.btn_roomconfig.onClick.AddListener (UISet.Ebtn_roomconfig);
 		UISet.btn_roominvite.onClick.AddListener (UISet.Ebtn_roominvite);
 		UISet.btn_roomexit.onClick.AddListener (UISet.Ebtn_roomexit);
 

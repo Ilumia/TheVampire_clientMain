@@ -7,7 +7,7 @@ public class UISet : MonoBehaviour {
 	public static Communication comm;
 
 	public enum UIState { MAIN_SELECT, MAIN_LOGIN, LOBBY_CREATEROOM, 
-		LOBBY_LOBBY, ROOM_READIED, CAUTION};
+		LOBBY_LOBBY, ROOM_READIED, ROOM_STARTED, CAUTION};
 	public static UIState uiState;
 
 	private static bool autoLoginFlag;
@@ -37,19 +37,21 @@ public class UISet : MonoBehaviour {
 	public static Button btn_createcancel;
 	public static Text txt_numbercount;
 	public static GameObject Room;				// Room
+	public static GameObject Set_Room;			// Room Set
 	public static GameObject Set_ReadiedRoom;	// ReadiedRoom Set
-	public static Button[] Players;					// player buttons
-	public static Image img_profile;
 	public static Text txt_profile;
 	public static Text txt_roominfo;
-	public static Text txt_chatlog;
-	public static InputField input_chat;
-	public static Button btn_chatenter;
 	public static Button btn_roomready;
 	public static Button btn_roomexit;
 	public static Button btn_roominvite;
-	public static Button btn_roomconfig;
 	public static Button btn_roompublic;
+	public static GameObject Set_StartedRoom;	// StartedRoom Set
+
+	public static Button[] Players;				// player buttons
+	public static Image img_profile;
+	public static Text txt_chatlog;
+	public static InputField input_chat;
+	public static Button btn_chatenter;
 	public static GameObject Caution;			// Caution
 	public static Text txt_caution;
 	public static GameObject Loading;			// Loading
@@ -182,9 +184,6 @@ public class UISet : MonoBehaviour {
 	public static void Ebtn_roompublic() {
 		
 	}
-	public static void Ebtn_roomconfig() {
-		
-	}
 	public static void Ebtn_roominvite() {
 		
 	}
@@ -212,6 +211,8 @@ public class UISet : MonoBehaviour {
 		Set_Lobby.SetActive (false);
 		Set_CreateRoom.SetActive (false);
 		Room.SetActive (false);
+		Set_StartedRoom.SetActive (false);
+		Set_ReadiedRoom.SetActive (false);
 		Caution.SetActive (false);
 		Loading.SetActive (false);
 	}
@@ -262,6 +263,11 @@ public class UISet : MonoBehaviour {
 			input_chat.Select();
 			uiState = UIState.ROOM_READIED;
 			break;
+		case UIState.ROOM_STARTED:
+			Room.SetActive(true);
+			Set_StartedRoom.SetActive(true);
+			input_chat.Select();
+			break;
 		case UIState.CAUTION:
 			if(uiState == UIState.MAIN_SELECT) {
 				Main.SetActive(true);
@@ -279,6 +285,9 @@ public class UISet : MonoBehaviour {
 			} else if(uiState == UIState.ROOM_READIED) {
 				Room.SetActive(true);
 				Set_ReadiedRoom.SetActive(true);
+			} else if(uiState == UIState.ROOM_STARTED) {
+				Room.SetActive(true);
+				Set_StartedRoom.SetActive(true);
 			}
 			Caution.SetActive(true);
 			break;
