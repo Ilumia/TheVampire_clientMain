@@ -27,6 +27,12 @@ public class UIManagement : MonoBehaviour {
 		// Initialize UI Set
 		// *Main
 		UISet.Main = GameObject.Find("Main");
+		// Main
+		UISet.Set_Main = GameObject.Find ("Set_Main");
+		UISet.btn_startgame = GameObject.Find ("btn_startgame").GetComponent<Button>();
+		UISet.btn_setting = GameObject.Find ("btn_setting").GetComponent<Button>();
+		UISet.btn_staff = GameObject.Find ("btn_staff").GetComponent<Button>();
+		UISet.btn_exit = GameObject.Find ("btn_exit").GetComponent<Button>();
 		// SelectMode
 		UISet.Set_SelectMode = GameObject.Find("Set_SelectMode");
 		UISet.btn_solo = GameObject.Find("btn_solo").GetComponent<Button>();
@@ -44,25 +50,17 @@ public class UIManagement : MonoBehaviour {
 		UISet.Lobby = GameObject.Find("Lobby");
 		// Lobby
 		UISet.Set_Lobby = GameObject.Find("Set_Lobby");
-		UISet.btn_randomenter = GameObject.Find("btn_randomenter").GetComponent<Button> ();
+		UISet.btn_roomenter = GameObject.Find("btn_roomenter").GetComponent<Button> ();
 		UISet.btn_createroom = GameObject.Find("btn_createroom").GetComponent<Button>();
+		UISet.btn_createprivateroom = GameObject.Find ("btn_createprivateroom").GetComponent<Button> ();
 		UISet.btn_friends = GameObject.Find("btn_friends").GetComponent<Button>();
-		UISet.btn_exit = GameObject.Find("btn_exit").GetComponent<Button>();
-		// CreateRoom
-		UISet.Set_CreateRoom = GameObject.Find ("Set_CreateRoom");
-		UISet.slider_number = GameObject.Find ("slider_number").GetComponent<Slider> ();
-		UISet.toggle_public = GameObject.Find ("toggle_public").GetComponent<Toggle> ();
-		UISet.btn_createconfirm = GameObject.Find ("btn_createconfirm").GetComponent<Button> ();
-		UISet.btn_createcancel = GameObject.Find ("btn_createcancel").GetComponent<Button> ();
-		UISet.txt_numbercount = GameObject.Find ("txt_numbercount").GetComponent<Text> ();
+		UISet.btn_lobbyexit = GameObject.Find("btn_lobbyexit").GetComponent<Button>();
 		// *Room
 		UISet.Room = GameObject.Find ("Room");
 		// ReadiedRoom
 		UISet.Set_ReadiedRoom = GameObject.Find ("Set_ReadiedRoom");
 		UISet.txt_profile = GameObject.Find ("txt_profile").GetComponent<Text> ();
 		UISet.txt_roominfo = GameObject.Find ("txt_roominfo").GetComponent<Text> ();
-		UISet.btn_roomready = GameObject.Find ("btn_roomready").GetComponent<Button> ();
-		UISet.btn_roompublic = GameObject.Find ("btn_roompublic").GetComponent<Button>();
 		UISet.btn_roominvite = GameObject.Find ("btn_roominvite").GetComponent<Button>();
 		UISet.btn_roomexit = GameObject.Find ("btn_roomexit").GetComponent<Button>();
 		UISet.Set_StartedRoom = GameObject.Find ("Set_StartedRoom");
@@ -82,6 +80,11 @@ public class UIManagement : MonoBehaviour {
 		UISet.img_loadcircle = GameObject.Find ("img_loadcircle").GetComponent<Image> ();
 		
 		// Initialize click event
+		// Main
+		UISet.btn_startgame.onClick.AddListener (UISet.Ebtn_startgame);
+		UISet.btn_setting.onClick.AddListener (UISet.Ebtn_setting);
+		UISet.btn_staff.onClick.AddListener (UISet.Ebtn_staff);
+		UISet.btn_exit.onClick.AddListener (UISet.Ebtn_exit);
 		// SelectMode
 		UISet.btn_solo.onClick.AddListener (UISet.Ebtn_solo);
 		UISet.btn_multi.onClick.AddListener (UISet.Ebtn_multi);
@@ -94,25 +97,20 @@ public class UIManagement : MonoBehaviour {
 		UISet.btn_cancel.onClick.AddListener (UISet.Ebtn_cancel);
 		UISet.btn_login.onClick.AddListener (UISet.Ebtn_login);
 		// Lobby
-		UISet.btn_randomenter.onClick.AddListener (UISet.Ebtn_randomenter);
+		UISet.btn_roomenter.onClick.AddListener (UISet.Ebtn_roomenter);
 		UISet.btn_createroom.onClick.AddListener (UISet.Ebtn_createroom);
+		UISet.btn_createprivateroom.onClick.AddListener (UISet.Ebtn_createprivateroom);
 		UISet.btn_friends.onClick.AddListener (UISet.Ebtn_friends);
-		UISet.btn_exit.onClick.AddListener (UISet.Ebtn_exit);
-		// CreateRoom
-		UISet.slider_number.onValueChanged.AddListener (UISet.Eslider_number);
-		UISet.toggle_public.onValueChanged.AddListener (UISet.Etoggle_public);
-		UISet.btn_createconfirm.onClick.AddListener (UISet.Ebtn_createconfirm);
-		UISet.btn_createcancel.onClick.AddListener (UISet.Ebtn_createcancel);
+		UISet.btn_lobbyexit.onClick.AddListener (UISet.Ebtn_lobbyexit);
 		foreach (Button player in UISet.Players) {
 			player.onClick.AddListener(UISet.EPlayers);
 		}
 		UISet.btn_chatenter.onClick.AddListener (UISet.Ebtn_chatenter);
-		UISet.btn_roomready.onClick.AddListener (UISet.Ebtn_roomready);
-		UISet.btn_roompublic.onClick.AddListener (UISet.Ebtn_roompublic);
 		UISet.btn_roominvite.onClick.AddListener (UISet.Ebtn_roominvite);
 		UISet.btn_roomexit.onClick.AddListener (UISet.Ebtn_roomexit);
 
-		UISet.ActiveUI (UISet.UIState.MAIN_SELECT);
+		UISet.ActiveUI (UISet.UIState.MAIN);
+		UISet.autoLoginFlag = true;
 
 	}
 	
@@ -169,7 +167,8 @@ public class UIManagement : MonoBehaviour {
 				if (eventSystem.currentSelectedGameObject.name.Equals (UISet.input_password.name)) {
 					UISet.Ebtn_login ();
 				}
-			} else if (UISet.uiState == UISet.UIState.ROOM_READIED) {
+			} else if (UISet.uiState == UISet.UIState.ROOM_READIED_PUBLIC || 
+			           UISet.uiState == UISet.UIState.ROOM_READIED_PRIVATE) {
 				if (eventSystem.currentSelectedGameObject == null) { 
 					UISet.input_chat.Select();
 				} else if (eventSystem.currentSelectedGameObject.name.Equals (UISet.input_chat.name)) {
@@ -190,7 +189,7 @@ public class UIManagement : MonoBehaviour {
 		roomUpdateFlag = false;
 
 		UISet.SetUILock(false);
-		UISet.ActiveUI (UISet.UIState.ROOM_READIED);
+		UISet.ActiveUI (UISet.uiState);
 
 		string roomInfo = "방 번호: ";
 		roomInfo += StructManager.myRoomInfo.roomNumber.ToString () + "\n\n";

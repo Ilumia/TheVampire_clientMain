@@ -30,6 +30,7 @@ public partial class Communication {
 
 	public void SendMessageToServer(char type, String data) {
 		Message message = new Message();
+		Debug.Log ("Send type: " + type + ", data: " + data);
 		if (m_Client != null)
 		{
 			if (!m_Client.Connected)
@@ -86,8 +87,7 @@ public partial class Communication {
 		if (_client.Connected)
 		{
 			_client.Receive(message.DataBuffer, message.Length, SocketFlags.None);
-			Debug.Log("Recv Type: " + (char)message.Type);
-			Debug.Log("Recv Data: " + Encoding.Unicode.GetString(message.Data));
+			Debug.Log("Recv Type: " + (char)message.Type + ", Data: " + Encoding.Unicode.GetString(message.Data));
 			_client.ReceiveAsync(e);
 
 			try {

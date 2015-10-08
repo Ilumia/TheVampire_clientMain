@@ -6,13 +6,18 @@ public class UISet : MonoBehaviour {
 	public static bool uiLock;
 	public static Communication comm;
 
-	public enum UIState { MAIN_SELECT, MAIN_LOGIN, LOBBY_CREATEROOM, 
-		LOBBY_LOBBY, ROOM_READIED, ROOM_STARTED, CAUTION};
+	public enum UIState { MAIN, MAIN_SELECT, MAIN_LOGIN, 
+		LOBBY_LOBBY, ROOM_READIED_PUBLIC, ROOM_READIED_PRIVATE, ROOM_STARTED, CAUTION};
 	public static UIState uiState;
 
-	private static bool autoLoginFlag;
+	public static bool autoLoginFlag;
 
 	public static GameObject Main;				// Main
+	public static GameObject Set_Main;			// Main Set
+	public static Button btn_startgame;
+	public static Button btn_setting;
+	public static Button btn_staff;
+	public static Button btn_exit;
 	public static GameObject Set_SelectMode;	// SelectMode Set
 	public static Button btn_solo;
 	public static Button btn_multi;
@@ -26,25 +31,18 @@ public class UISet : MonoBehaviour {
 	public static Button btn_login;
 	public static GameObject Lobby;				// Lobby
 	public static GameObject Set_Lobby;			// Lobby Set
-	public static Button btn_randomenter;
+	public static Button btn_roomenter;
 	public static Button btn_createroom;
+	public static Button btn_createprivateroom;
 	public static Button btn_friends;
-	public static Button btn_exit;
-	public static GameObject Set_CreateRoom;	// CreateRoom Set
-	public static Slider slider_number;
-	public static Toggle toggle_public;
-	public static Button btn_createconfirm;
-	public static Button btn_createcancel;
-	public static Text txt_numbercount;
+	public static Button btn_lobbyexit;
 	public static GameObject Room;				// Room
 	public static GameObject Set_Room;			// Room Set
 	public static GameObject Set_ReadiedRoom;	// ReadiedRoom Set
 	public static Text txt_profile;
 	public static Text txt_roominfo;
-	public static Button btn_roomready;
 	public static Button btn_roomexit;
 	public static Button btn_roominvite;
-	public static Button btn_roompublic;
 	public static GameObject Set_StartedRoom;	// StartedRoom Set
 
 	public static Button[] Players;				// player buttons
@@ -57,6 +55,22 @@ public class UISet : MonoBehaviour {
 	public static GameObject Loading;			// Loading
 	public static Image img_loadcircle;
 
+	// Main
+	public static void Ebtn_startgame() {
+		if (uiLock) { return; }
+		ActiveUI (UIState.MAIN_SELECT);
+	}
+	public static void Ebtn_setting() {
+		if (uiLock) { return; }
+
+	}
+	public static void Ebtn_staff() {
+		if (uiLock) { return; }
+
+	}
+	public static void Ebtn_exit() {
+		Application.Quit ();
+	}
 	// SelectMode
 	public static void Ebtn_solo() {
 		if (uiLock) { return; }
@@ -80,7 +94,7 @@ public class UISet : MonoBehaviour {
 	}
 	public static void Etoggle_autologin(bool check) {
 		if (uiLock) { return; }
-		
+
 	}
 	public static void Ebtn_signup() {
 		if (uiLock) { return; }
@@ -93,7 +107,7 @@ public class UISet : MonoBehaviour {
 		if (uiLock) { return; }
 		input_email.text = "";
 		input_password.text = "";
-		ActiveUI (UIState.MAIN_SELECT);
+		ActiveUI (UIState.MAIN);
 	}
 	public static void Ebtn_login() {
 		if (uiLock) { return; }
@@ -115,52 +129,26 @@ public class UISet : MonoBehaviour {
 		UISet.SetUILock(true);
 	}
 	// Lobby
-	public static void Ebtn_randomenter() {
+	public static void Ebtn_roomenter() {
 		if (uiLock) { return; }
 		comm.SendMessageToServer ('F', "");
 		UISet.SetUILock(true);
 	}
 	public static void Ebtn_createroom() {
+		comm.SendMessageToServer ('C', "t");
 		if (uiLock) { return; }
-		ActiveUI (UIState.LOBBY_CREATEROOM);
+	}
+	public static void Ebtn_createprivateroom() {
+		comm.SendMessageToServer ('C', "f");
+		if (uiLock) { return; }
 	}
 	public static void Ebtn_friends() {
 		if (uiLock) { return; }
 		
 	}
-	public static void Ebtn_exit() {
+	public static void Ebtn_lobbyexit() {
 		if (uiLock) { return; }
 		ActiveUI (UIState.MAIN_LOGIN);
-	}
-	public static void Ebtn_listup() {
-		if (uiLock) { return; }
-		
-	}
-	public static void Ebtn_listdown() {
-		if (uiLock) { return; }
-		
-	}
-	// CreateRoom
-	public static void Eslider_number(float param) {
-		if (uiLock) { return; }
-		txt_numbercount.text = Mathf.Round (param).ToString ();
-	}
-	public static void Etoggle_public(bool check) {
-		if (uiLock) { return; }
-		
-	}
-	public static void Ebtn_createconfirm() {
-		if (uiLock) { return; }
-		string maxNum = slider_number.value.ToString ();
-		string isPublc;
-		if(toggle_public) { isPublc = "t"; }
-		else { isPublc = "f"; }
-		comm.SendMessageToServer ('C', maxNum + " " + isPublc);
-		UISet.SetUILock(true);
-	}
-	public static void Ebtn_createcancel() {
-		if (uiLock) { return; }
-		ActiveUI (UIState.LOBBY_LOBBY);
 	}
 	// ReadiedRoom
 	public static void EPlayers() {
@@ -177,12 +165,6 @@ public class UISet : MonoBehaviour {
 		comm.SendMessageToServer ('G', input_chat.text);
 		input_chat.text = "";
 		input_chat.Select ();
-	}
-	public static void Ebtn_roomready() {
-		
-	}
-	public static void Ebtn_roompublic() {
-		
 	}
 	public static void Ebtn_roominvite() {
 		
@@ -205,11 +187,11 @@ public class UISet : MonoBehaviour {
 	}
 	public static void InactiveUI() {
 		Main.SetActive (false);
+		Set_Main.SetActive (false);
 		Set_SelectMode.SetActive (false);
 		Set_Login.SetActive (false);
 		Lobby.SetActive (false);
 		Set_Lobby.SetActive (false);
-		Set_CreateRoom.SetActive (false);
 		Room.SetActive (false);
 		Set_StartedRoom.SetActive (false);
 		Set_ReadiedRoom.SetActive (false);
@@ -222,11 +204,15 @@ public class UISet : MonoBehaviour {
 	public static void ActiveUI_(UIState state) {
 		InactiveUI ();
 		switch (state) {
+		case UIState.MAIN:
+			Main.SetActive(true);
+			Set_Main.SetActive (true);
+			uiState = UIState.MAIN;
+			break;
 		case UIState.MAIN_SELECT:
 			Main.SetActive(true);
 			Set_SelectMode.SetActive(true);
 			uiState = UIState.MAIN_SELECT;
-			autoLoginFlag = true;
 			break;
 		case UIState.MAIN_LOGIN:
 			Main.SetActive(true);
@@ -243,6 +229,7 @@ public class UISet : MonoBehaviour {
 			if(GlobalConfig.isAutoLogin) {
 				if(autoLoginFlag) {
 					Ebtn_login();
+					autoLoginFlag = false;
 				}
 			}
 			uiState = UIState.MAIN_LOGIN;
@@ -252,16 +239,19 @@ public class UISet : MonoBehaviour {
 			Set_Lobby.SetActive(true);
 			uiState = UIState.LOBBY_LOBBY;
 			break;
-		case UIState.LOBBY_CREATEROOM:
-			Lobby.SetActive(true);
-			Set_Lobby.SetActive(true);
-			Set_CreateRoom.SetActive(true);
-			break;
-		case UIState.ROOM_READIED:
+		case UIState.ROOM_READIED_PUBLIC:
 			Room.SetActive(true);
 			Set_ReadiedRoom.SetActive(true);
+			btn_roominvite.gameObject.SetActive(false);
 			input_chat.Select();
-			uiState = UIState.ROOM_READIED;
+			uiState = UIState.ROOM_READIED_PUBLIC;
+			break;
+		case UIState.ROOM_READIED_PRIVATE:
+			Room.SetActive(true);
+			Set_ReadiedRoom.SetActive(true);
+			btn_roominvite.gameObject.SetActive(true);
+			input_chat.Select();
+			uiState = UIState.ROOM_READIED_PRIVATE;
 			break;
 		case UIState.ROOM_STARTED:
 			Room.SetActive(true);
@@ -278,13 +268,14 @@ public class UISet : MonoBehaviour {
 			} else if(uiState == UIState.LOBBY_LOBBY) {
 				Lobby.SetActive(true);
 				Set_Lobby.SetActive(true);
-			} else if(uiState == UIState.LOBBY_CREATEROOM) {
-				Lobby.SetActive(true);
-				Set_Lobby.SetActive(true);
-				Set_CreateRoom.SetActive(true);
-			} else if(uiState == UIState.ROOM_READIED) {
+			} else if(uiState == UIState.ROOM_READIED_PRIVATE) {
 				Room.SetActive(true);
 				Set_ReadiedRoom.SetActive(true);
+				btn_roominvite.gameObject.SetActive(false);
+			} else if(uiState == UIState.ROOM_READIED_PUBLIC) {
+				Room.SetActive(true);
+				Set_ReadiedRoom.SetActive(true);
+				btn_roominvite.gameObject.SetActive(true);
 			} else if(uiState == UIState.ROOM_STARTED) {
 				Room.SetActive(true);
 				Set_StartedRoom.SetActive(true);

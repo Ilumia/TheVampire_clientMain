@@ -57,10 +57,16 @@ public partial class Communication {
 		}
 	}
 	private void RoomCreateProc(string data) {
-		if (data.Equals ("s")) {
+		String[] _data = data.Split (' ');
+		if (_data[0].Equals ("s")) {
 			// 방 생성 성공
 			Debug.Log ("success to create room");
-		} else if (data.Equals ("f")) {
+			if(_data[1].Equals("t")) {
+				UISet.ActiveUI(UISet.UIState.ROOM_READIED_PUBLIC);
+			} else {
+				UISet.ActiveUI(UISet.UIState.ROOM_READIED_PRIVATE);
+			}
+		} else if (_data[0].Equals ("f")) {
 			UISet.ActiveUI (UISet.UIState.CAUTION);
 			UISet.SetCaution("방 만들기에 실패했습니다. \n다시 시도해주세요.");
 			UISet.SetUILock(false);
