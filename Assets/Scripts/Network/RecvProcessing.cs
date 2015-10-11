@@ -74,7 +74,7 @@ public partial class Communication {
 	}
 	private void FailToRoomEnter() {
 		UISet.ActiveUI (UISet.UIState.CAUTION);
-		UISet.SetCaution("입장에 실패했습니다. \n새로고침후 다시 시도해주세요.");
+		UISet.SetCaution("입장할 수 있는 방이 없습니다.");
 		UISet.SetUILock(false);
 	}
 	private void RoomUpdateProc(string data) {
@@ -87,8 +87,10 @@ public partial class Communication {
 		Int32.TryParse (tempStringArray [1], out totalNum);
 		Int32.TryParse (tempStringArray [2], out maxNum);
 		if (tempStringArray [3].Equals ("t")) {
+			UISet.ActiveUI (UISet.UIState.ROOM_READIED_PUBLIC);
 			isPublic = true;
 		} else {
+			UISet.ActiveUI (UISet.UIState.ROOM_READIED_PRIVATE);
 			isPublic = false;
 		}
 		List<Player> users = new List<Player> ();

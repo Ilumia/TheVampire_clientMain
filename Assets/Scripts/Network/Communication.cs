@@ -3,6 +3,7 @@ using System.Text;
 using System.Net;
 using System.Net.Sockets;
 using UnityEngine;
+using UnityEngine.UI;
 
 public partial class Communication {
 	private Socket m_Client = null;
@@ -14,12 +15,14 @@ public partial class Communication {
 		}
 		return comm;
 	}
+	private char sendType = '-';
+	private string sendMessage = null;
 
 	private Communication()
 	{
 		Debug.Log ("start socket!");
 		socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-		IPEndPoint _ipep = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 8000);
+		IPEndPoint _ipep = new IPEndPoint(IPAddress.Parse("1.227.55.40"), 50005);
 		
 		SocketAsyncEventArgs _args = new SocketAsyncEventArgs();
 		_args.RemoteEndPoint = _ipep;
@@ -31,23 +34,23 @@ public partial class Communication {
 	public void SendMessageToServer(char type, String data) {
 		Message message = new Message();
 		Debug.Log ("Send type: " + type + ", data: " + data);
-		if (m_Client != null)
-		{
-			if (!m_Client.Connected)
-			{
-				DisconnectProcessing();
-			}
-			else
-			{
-				byte[] _sData = Compression.CompressToBytes(data);
+		if (m_Client != null) {
+			if (!m_Client.Connected) {
+				DisconnectProcessing ();
+			} else {
+				byte[] _sData = Compression.CompressToBytes (data);
 
-				message.InitSendPacket(Convert.ToByte(type), _sData);
-				SocketAsyncEventArgs _sendArgs = new SocketAsyncEventArgs();
-				_sendArgs.SetBuffer(BitConverter.GetBytes(message.Length), 0, 4);
-				_sendArgs.Completed += new EventHandler<SocketAsyncEventArgs>(Send_Completed);
+				message.InitSendPacket (Convert.ToByte (type), _sData);
+				SocketAsyncEventArgs _sendArgs = new SocketAsyncEventArgs ();
+				_sendArgs.SetBuffer (BitConverter.GetBytes (message.Length), 0, 4);
+				_sendArgs.Completed += new EventHandler<SocketAsyncEventArgs> (Send_Completed);
 				_sendArgs.UserToken = message;
-				m_Client.SendAsync(_sendArgs);
+				m_Client.SendAsync (_sendArgs);
 			}
+		} else {
+			sendType = type;
+			sendMessage = data;
+			GameObject.Find("debug").GetComponent<Text>().text = "stucked!";
 		}
 	}
 	
@@ -64,6 +67,9 @@ public partial class Communication {
 			_receiveArgs.Completed += new EventHandler<SocketAsyncEventArgs>(Receive_Completed);
 			m_Client.ReceiveAsync(_receiveArgs);
 			Debug.Log("Server Connection Success");
+			if(sendType != '-') {
+				SendMessageToServer(sendType, sendMessage);
+			}
 		}
 		else
 		{

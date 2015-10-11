@@ -98,6 +98,7 @@ public class UISet : MonoBehaviour {
 	}
 	public static void Ebtn_signup() {
 		if (uiLock) { return; }
+		comm = Communication.Instance();
 		string email = input_email.text;
 		string password = input_password.text;
 		comm.SendMessageToServer ('I', email + " " + password);
@@ -164,7 +165,6 @@ public class UISet : MonoBehaviour {
 		if(input_chat.text == null || input_chat.text.Equals("")) { return; }
 		comm.SendMessageToServer ('G', input_chat.text);
 		input_chat.text = "";
-		input_chat.Select ();
 	}
 	public static void Ebtn_roominvite() {
 		
