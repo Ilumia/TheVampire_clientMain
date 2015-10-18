@@ -8,6 +8,7 @@ public class UIManagement : MonoBehaviour {
 	public static EventSystem eventSystem;
 	public static List<UISet.UIState> UIEventList;
 	public static List<bool> UILockList;
+	public static float uiLockTimer;
 	public static List<string> UICautionList;
 	public static List<string> UIRoomList;
 	public static bool chatUpdateFlag;
@@ -18,10 +19,11 @@ public class UIManagement : MonoBehaviour {
 		eventSystem = EventSystem.current;
 		UIEventList = new List<UISet.UIState> ();
 		UILockList = new List<bool> ();
+		uiLockTimer = 0.0f;
 		UICautionList = new List<string> ();
 		UIRoomList = new List<string> ();
 		roomUpdateFlag = false;
-		chatUpdateFlag = true;
+		chatUpdateFlag = false;
 		frameCounter = 0;
 
 		// Initialize UI Set
@@ -70,6 +72,7 @@ public class UIManagement : MonoBehaviour {
 		}
 		UISet.img_profile = GameObject.Find ("img_profile").GetComponent<Image> ();
 		UISet.txt_chatlog = GameObject.Find ("txt_chatlog").GetComponent<Text> ();
+		UISet.scroll_chat = GameObject.Find ("scroll_chat").GetComponent<Scrollbar> ();
 		UISet.input_chat = GameObject.Find ("input_chat").GetComponent<InputField> ();
 		UISet.btn_chatenter = GameObject.Find ("btn_chatenter").GetComponent<Button> ();
 		// Caution
@@ -118,6 +121,7 @@ public class UIManagement : MonoBehaviour {
 	void Update () {
 		UIEventProcessing ();
 		UILockProcessing ();
+		UILockTimer ();
 		UICautionProcessing ();
 		UITabProcessing ();
 		UIEnterProcessing ();
@@ -136,8 +140,19 @@ public class UIManagement : MonoBehaviour {
 		if (UILockList.Count == 0) {
 			return;
 		}
+		uiLockTimer = 10.0f;
 		UISet.SetUILock_ (UILockList [0]);
 		UILockList.RemoveAt (0);
+	}
+	void UILockTimer() {
+		if (UISet.uiLock) {
+			if (uiLockTimer > 0) {
+				uiLockTimer -= Time.deltaTime;
+			} else {
+				UISet.SetCaution("서버에 연결할 수 없습니다");
+				UISet.SetUILock (false);
+			}
+		}
 	}
 	void UICautionProcessing() {
 		if (UISet.Caution.activeSelf) {
@@ -182,7 +197,12 @@ public class UIManagement : MonoBehaviour {
 	void UIChatUpdateProcessing() {
 		if (!chatUpdateFlag) { return; }
 		chatUpdateFlag = false;
-		UISet.txt_chatlog.text = StructManager.myRoomInfo.chatLog;
+		if (UISet.scroll_chat.value != 0) {
+			UISet.txt_chatlog.text = StructManager.myRoomInfo.chatLog;
+			UISet.scroll_chat.value = 0;
+		} else {
+			UISet.txt_chatlog.text = StructManager.myRoomInfo.chatLog;
+		}
 	}
 	void UIRoomUpdateProcessing() {
 		if (!roomUpdateFlag) { return; }
@@ -207,7 +227,6 @@ public class UIManagement : MonoBehaviour {
 
 		for(int i=0; i<StructManager.myRoomInfo.users.Count; i++) {
 			UISet.Players[i].transform.GetChild(0).GetComponent<Text>().text = StructManager.myRoomInfo.users[i].id;
-			Debug.Log (StructManager.myRoomInfo.users[i].id);
 		}
 	}
 	void UILoadingProcessing() {

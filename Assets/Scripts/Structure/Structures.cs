@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-public struct RoomInfo {
+public class RoomInfo {
 	public int roomNumber;
 	public int totalNumber;
 	public int maximumNumber;
@@ -10,15 +10,21 @@ public struct RoomInfo {
 	public int roomState;   // -1: 시작 전, 0: 게임종료, 1이상의 양수: 진행회차
 	public string chatLog;
 
+	public RoomInfo() {
+
+	}
 	public RoomInfo(int _roomNumber, int _totalNumber, int _maximumNumber) {
 		roomNumber = _roomNumber;
 		totalNumber = _totalNumber;
 		maximumNumber = _maximumNumber;
 		isPublic = true;
-		users = null;
+		users = new List<Player>();
 		owner = new Player ();
 		roomState = -1;
 		chatLog = "";
+	}
+	public void RoomUpdate(int _totalNumber) {
+		this.totalNumber = _totalNumber;
 	}
 	public void RoomInfoUpdate(int _totalNumber, int _maximumNumber, bool _isPublic, List<Player> _users) {
 		totalNumber = _totalNumber;
@@ -31,11 +37,16 @@ public struct RoomInfo {
 
 public enum PlayerState { UNSET, TURN_ON, TURN_OFF, DEFEATED };
 public enum PlayerJob { UNSET, VAMPIRE, HUNTER };
-public struct Player {
+public class Player {
 	public string id;
 	public PlayerJob job;
 	public PlayerState state;
 	public bool isAI;
+	public Player() {
+		job = PlayerJob.UNSET;
+		state = PlayerState.UNSET;
+		isAI = false;
+	}
 	public Player(string id) {
 		this.id = id;
 		job = PlayerJob.UNSET;
@@ -58,7 +69,7 @@ public struct Player {
             */
 	}
 }
-public struct UserInfo {
+public class UserInfo {
 	public string id;
 	public Item item;
 	public UserInfo (string _id) {
@@ -66,7 +77,7 @@ public struct UserInfo {
 		item = new Item ();
 	}
 }
-public struct Item {
+public class Item {
 	public Dictionary<int, Ability> abilitySet;
 	public Dictionary<int, InfoCard> infoCardSet;
 	public Dictionary<int, BattleCard> battleCardSet;
@@ -85,14 +96,14 @@ public struct Item {
 		battleCardSet = _battleCardSet;
 	}
 }
-public struct Ability {
+public class Ability {
 	public string abilityName;
 	public PlayerJob jobClass;
 	public float effect;
 	public float effectFactor;
 	public string description;
 }
-public struct InfoCard {
+public class InfoCard {
 	public string cardName;
 	public string grade;
 	public float pickRate;
@@ -101,7 +112,7 @@ public struct InfoCard {
 	public string description;
 	public string note;
 }
-public struct BattleCard {
+public class BattleCard {
 	public string cardName;
 	public string grade;
 	public float effect;

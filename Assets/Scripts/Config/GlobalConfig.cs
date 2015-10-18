@@ -15,7 +15,7 @@ public class GlobalConfig : MonoBehaviour {
 	void Awake () {
 		FileSystem.ReadConfig ();
 		ItemSetInterpreter.ReadSet ();
-		Screen.SetResolution (1280, 720, true);
+		//Screen.SetResolution (1280, 720, true);
 	}
 
 	void Update() {

@@ -38,18 +38,18 @@ public class UISet : MonoBehaviour {
 	public static Button btn_lobbyexit;
 	public static GameObject Room;				// Room
 	public static GameObject Set_Room;			// Room Set
+	public static Button[] Players;
+	public static Image img_profile;
+	public static Text txt_chatlog;
+	public static Scrollbar scroll_chat;
+	public static InputField input_chat;
+	public static Button btn_chatenter;
 	public static GameObject Set_ReadiedRoom;	// ReadiedRoom Set
 	public static Text txt_profile;
 	public static Text txt_roominfo;
 	public static Button btn_roomexit;
 	public static Button btn_roominvite;
 	public static GameObject Set_StartedRoom;	// StartedRoom Set
-
-	public static Button[] Players;				// player buttons
-	public static Image img_profile;
-	public static Text txt_chatlog;
-	public static InputField input_chat;
-	public static Button btn_chatenter;
 	public static GameObject Caution;			// Caution
 	public static Text txt_caution;
 	public static GameObject Loading;			// Loading
@@ -156,10 +156,6 @@ public class UISet : MonoBehaviour {
 		if (uiLock) { return; }
 		// player 확인 필요
 	}
-	public static void Escroll_chat(float value) {
-		if (uiLock) { return; }
-
-	}
 	public static void Ebtn_chatenter() {
 		if (uiLock) { return; }
 		if(input_chat.text == null || input_chat.text.Equals("")) { return; }
@@ -243,20 +239,19 @@ public class UISet : MonoBehaviour {
 			Room.SetActive(true);
 			Set_ReadiedRoom.SetActive(true);
 			btn_roominvite.gameObject.SetActive(false);
-			input_chat.Select();
+			txt_chatlog.text = "";
 			uiState = UIState.ROOM_READIED_PUBLIC;
 			break;
 		case UIState.ROOM_READIED_PRIVATE:
 			Room.SetActive(true);
 			Set_ReadiedRoom.SetActive(true);
 			btn_roominvite.gameObject.SetActive(true);
-			input_chat.Select();
+			txt_chatlog.text = "";
 			uiState = UIState.ROOM_READIED_PRIVATE;
 			break;
 		case UIState.ROOM_STARTED:
 			Room.SetActive(true);
 			Set_StartedRoom.SetActive(true);
-			input_chat.Select();
 			break;
 		case UIState.CAUTION:
 			if(uiState == UIState.MAIN_SELECT) {
@@ -289,5 +284,9 @@ public class UISet : MonoBehaviour {
 	}
 	public static void SetCaution_ (string text) {
 		txt_caution.text = text;
+	}
+	public static void SetChat (string text) {
+		StructManager.myRoomInfo.chatLog += text + "\n";
+		UIManagement.chatUpdateFlag = true;
 	}
 }

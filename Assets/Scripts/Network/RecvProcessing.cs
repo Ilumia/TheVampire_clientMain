@@ -30,6 +30,15 @@ public partial class Communication {
 		case 'g':
 			SignUpProc(_data);
 			break;
+		case 'h':
+			//show friends
+			break;
+		case 'i':
+			//add friedn
+			break;
+		case 'j':
+			GameStartProc();
+			break;
 		case 'w':
 			ItemListProc(_data);
 			break;
@@ -61,6 +70,7 @@ public partial class Communication {
 		if (_data[0].Equals ("s")) {
 			// 방 생성 성공
 			Debug.Log ("success to create room");
+			StructManager.myRoomInfo = null;
 			if(_data[1].Equals("t")) {
 				UISet.ActiveUI(UISet.UIState.ROOM_READIED_PUBLIC);
 			} else {
@@ -99,8 +109,25 @@ public partial class Communication {
 			Player player = new Player(tempStringArray[i]);
 			users.Add(player);
 		}
-		StructManager.myRoomInfo = new RoomInfo (roomNum, totalNum, maxNum);
-		StructManager.myRoomInfo.owner = users [0];
+		if (StructManager.myRoomInfo == null) {
+			StructManager.myRoomInfo = new RoomInfo (roomNum, totalNum, maxNum);
+			StructManager.myRoomInfo.owner = users [0];
+		}
+
+		/* //입장 및 퇴장 메시지 보류
+		foreach (Player user in users) {
+			Debug.Log ("new users: " + user.id);
+			if(!StructManager.myRoomInfo.users.Contains(user)) {
+				UISet.SetChat("[SYSTEM] " + user.id + " 님이 입장했습니다.");
+			}
+		}
+		foreach (Player user in StructManager.myRoomInfo.users) {
+			Debug.Log ("room users: " + user.id);
+			if(!users.Contains(user)) {
+				UISet.SetChat("[SYSTEM] " + user.id + " 님이 퇴장했습니다.");
+			}
+		}
+		*/
 		StructManager.myRoomInfo.RoomInfoUpdate(totalNum, maxNum, isPublic, users);
 
 		UIManagement.roomUpdateFlag = true;
@@ -110,9 +137,9 @@ public partial class Communication {
 		string[] _tempStringArray = tempStringArray [1].Split ('\n');
 		string sender = tempStringArray [0];
 		string chat = _tempStringArray [1];
-		StructManager.myRoomInfo.chatLog += sender + "\t : " + chat + "\n";
-		
-		UIManagement.chatUpdateFlag = true;
+		UISet.SetChat (sender + "\t : " + chat);
+		//StructManager.myRoomInfo.chatLog += sender + "\t : " + chat + "\n";
+		//UIManagement.chatUpdateFlag = true;
 	}
 	private void SignUpProc(string data) {
 		if (data.Equals ("s")) {
@@ -123,6 +150,9 @@ public partial class Communication {
 			UISet.SetCaution("이미 가입된 이메일입니다.");
 		}
 		UISet.SetUILock(false);
+	}
+	private void GameStartProc() {
+		UISet.ActiveUI (UISet.UIState.ROOM_STARTED);
 	}
 	private void ItemListProc(string data) {
 		File.WriteAllText (ItemSetInterpreter.path, data);

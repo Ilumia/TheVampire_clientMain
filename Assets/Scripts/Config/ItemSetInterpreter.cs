@@ -25,7 +25,7 @@ public class ItemSetInterpreter {
 			Int32.TryParse(tmpNum[1], out abilityNum);
 			Int32.TryParse(tmpNum[2], out informationNum);
 			Int32.TryParse(tmpNum[3], out battleNum);
-			int i = 2;
+			int i = 1;
 			for(; i < abilityNum + 2; i++) {
 				string[] tmp = cardSet[i].Split('\t');
 				Ability _ability = new Ability();
@@ -68,6 +68,7 @@ public class ItemSetInterpreter {
 				_battle.description = tmp[7];
 				battleCardSet.Add(number, _battle);
 			}
+			StructManager.itemSet = new Item();
 			StructManager.itemSet.SetItem(abilitySet, infoCardSet, battleCardSet);
 
 		} catch(IOException e) {

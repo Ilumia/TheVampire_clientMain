@@ -50,7 +50,6 @@ public partial class Communication {
 		} else {
 			sendType = type;
 			sendMessage = data;
-			GameObject.Find("debug").GetComponent<Text>().text = "stucked!";
 		}
 	}
 	
