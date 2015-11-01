@@ -96,7 +96,8 @@ public partial class Communication {
 			_client.ReceiveAsync(e);
 
 			try {
-				ReceiveProcessing(message.Type, message.Data);
+				byte[] _data = Compression.DecompressToBytes(message.Data);
+				ReceiveProcessing(message.Type, _data);
 			} catch(Exception _e) { 
 				Console.WriteLine(_e.Message);
 				Console.WriteLine(_e.StackTrace);

@@ -42,6 +42,21 @@ public partial class Communication {
 		case 'w':
 			ItemListProc(_data);
 			break;
+		case 'k':
+			//RandomNumberProc(_data);
+			break;
+		case 'l':
+			//GameInfoProc(_data);
+			break;
+		case 'm':
+			//GameTurnInfoProc(_data);
+			break;
+		case 'n':
+			RoomInOutProc(_data);
+			break;
+		case 'o':
+			TimerUpdateProc(_data);
+			break;
 		}
 	}
 
@@ -113,23 +128,9 @@ public partial class Communication {
 			StructManager.myRoomInfo = new RoomInfo (roomNum, totalNum, maxNum);
 			StructManager.myRoomInfo.owner = users [0];
 		}
-
-		/* //입장 및 퇴장 메시지 보류
-		foreach (Player user in users) {
-			Debug.Log ("new users: " + user.id);
-			if(!StructManager.myRoomInfo.users.Contains(user)) {
-				UISet.SetChat("[SYSTEM] " + user.id + " 님이 입장했습니다.");
-			}
-		}
-		foreach (Player user in StructManager.myRoomInfo.users) {
-			Debug.Log ("room users: " + user.id);
-			if(!users.Contains(user)) {
-				UISet.SetChat("[SYSTEM] " + user.id + " 님이 퇴장했습니다.");
-			}
-		}
-		*/
 		StructManager.myRoomInfo.RoomInfoUpdate(totalNum, maxNum, isPublic, users);
 
+		UIManagement.chatUpdateFlag = true;
 		UIManagement.roomUpdateFlag = true;
 	}
 	private void RoomChatProc(string data) {
@@ -152,7 +153,27 @@ public partial class Communication {
 		UISet.SetUILock(false);
 	}
 	private void GameStartProc() {
+		StructManager.myRoomInfo.roomState = 1;
 		UISet.ActiveUI (UISet.UIState.ROOM_STARTED);
+	}
+	private void RoomInOutProc(string data) {
+		string[] tmp = data.Split (' ');
+		string _message = tmp [1] + "님이 ";
+		if (tmp [0].Equals ("i")) {
+			_message += "입장하셨습니다.";
+			if(StructManager.myRoomInfo.users.Count == 4) {
+				UISet.SetChat ("10초 후 자동으로 게임이 시작됩니다.");
+			}
+		} else if (tmp [0].Equals ("o")) {
+			_message += "퇴장하셨습니다.";
+		}
+		UISet.SetChat (_message);
+	}
+	private void TimerUpdateProc(string data) {
+		float tmp = float.Parse (data);
+		if (tmp <= 3.0f) {
+			UISet.SetChat (tmp + "초 후 게임이 시작됩니다.");
+		}
 	}
 	private void ItemListProc(string data) {
 		File.WriteAllText (ItemSetInterpreter.path, data);

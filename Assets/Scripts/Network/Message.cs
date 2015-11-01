@@ -1,6 +1,6 @@
 ﻿using System;
 
-public struct Message
+public class Message
 {
 	private byte[] data;
 	private int length;

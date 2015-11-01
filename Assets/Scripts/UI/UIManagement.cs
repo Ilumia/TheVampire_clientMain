@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using System.Text;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -211,8 +212,15 @@ public class UIManagement : MonoBehaviour {
 		UISet.SetUILock(false);
 		UISet.ActiveUI (UISet.uiState);
 
+		string profile = "아이디: ";
+		profile += StructManager.user.id + "\n";
+		profile += "전적: 0전 0승 0패";
+		UISet.txt_profile.text = profile;
+
 		string roomInfo = "방 번호: ";
-		roomInfo += StructManager.myRoomInfo.roomNumber.ToString () + "\n\n";
+		roomInfo += StructManager.myRoomInfo.roomNumber.ToString () + "\n";
+		roomInfo += "방 개설자: ";
+		roomInfo += StructManager.myRoomInfo.owner.id + "\n";
 		if (StructManager.myRoomInfo.isPublic) {
 			roomInfo += "공개방\n";
 		} else {
@@ -221,12 +229,10 @@ public class UIManagement : MonoBehaviour {
 		roomInfo += "인원: ";
 		roomInfo += StructManager.myRoomInfo.totalNumber.ToString () + " / ";
 		roomInfo += StructManager.myRoomInfo.maximumNumber.ToString () + "\n";
-		roomInfo += "방 개설자: ";
-		roomInfo += StructManager.myRoomInfo.owner.id + "\n";
 		UISet.txt_roominfo.text = roomInfo;
 
 		for(int i=0; i<StructManager.myRoomInfo.users.Count; i++) {
-			UISet.Players[i].transform.GetChild(0).GetComponent<Text>().text = StructManager.myRoomInfo.users[i].id;
+			UISet.Players[i].GetComponentInChildren<Text>().text = StructManager.myRoomInfo.users[i].id;
 		}
 	}
 	void UILoadingProcessing() {

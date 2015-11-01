@@ -167,6 +167,7 @@ public class UISet : MonoBehaviour {
 	}
 	public static void Ebtn_roomexit() {
 		comm.SendMessageToServer ('H', StructManager.myRoomInfo.roomNumber.ToString());
+		StructManager.myRoomInfo = null;
 		UISet.ActiveUI (UISet.UIState.LOBBY_LOBBY);
 	}
 
@@ -233,20 +234,19 @@ public class UISet : MonoBehaviour {
 		case UIState.LOBBY_LOBBY:
 			Lobby.SetActive(true);
 			Set_Lobby.SetActive(true);
+			txt_chatlog.text = "";
 			uiState = UIState.LOBBY_LOBBY;
 			break;
 		case UIState.ROOM_READIED_PUBLIC:
 			Room.SetActive(true);
 			Set_ReadiedRoom.SetActive(true);
 			btn_roominvite.gameObject.SetActive(false);
-			txt_chatlog.text = "";
 			uiState = UIState.ROOM_READIED_PUBLIC;
 			break;
 		case UIState.ROOM_READIED_PRIVATE:
 			Room.SetActive(true);
 			Set_ReadiedRoom.SetActive(true);
 			btn_roominvite.gameObject.SetActive(true);
-			txt_chatlog.text = "";
 			uiState = UIState.ROOM_READIED_PRIVATE;
 			break;
 		case UIState.ROOM_STARTED:
