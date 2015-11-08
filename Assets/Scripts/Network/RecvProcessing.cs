@@ -155,6 +155,7 @@ public partial class Communication {
 	private void GameStartProc() {
 		StructManager.myRoomInfo.roomState = 1;
 		UISet.ActiveUI (UISet.UIState.ROOM_STARTED);
+		UICard.gettedCard = 3;
 	}
 	private void GameInfoProc(string data) {
 		UISet.SetChat ("<SYSTEM> " + data);
@@ -173,6 +174,12 @@ public partial class Communication {
 			}
 		}
 		UIManagement.hpUpdateFlag = true;
+		UIManagement.timerNotice = "15";
+
+		UICard.gettedCard++;
+		UICard newCard = new UICard(CardGenerator.GetCard(CardType.BATTLE));
+		newCard.SetOrder(UICard.cards.Count);
+		UICard.cards.Add(newCard);
 	}
 	private void RoomInOutProc(string data) {
 		string[] tmp = data.Split (' ');
@@ -189,10 +196,12 @@ public partial class Communication {
 	}
 	private void TimerUpdateProc(string data) {
 		float tmp = float.Parse (data);
-		if (StructManager.myRoomInfo.roomState > 1) {
+		if (StructManager.myRoomInfo.roomState == 0) {
 			if (tmp <= 3.0f) {
 				UISet.SetChat ("<SYSTEM> " + tmp + "초 후 게임이 시작됩니다.");
 			}
+		} else if (StructManager.myRoomInfo.roomState > 0) {
+			UIManagement.timerNotice = tmp.ToString();
 		}
 	}
 	private void ItemListProc(string data) {

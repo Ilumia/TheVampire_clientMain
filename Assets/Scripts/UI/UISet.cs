@@ -51,6 +51,8 @@ public class UISet : MonoBehaviour {
 	public static Button btn_roominvite;
 	public static GameObject Set_StartedRoom;	// StartedRoom Set
 	public static Text txt_status;
+	public static Text txt_timernotice;
+	public static Text txt_cardnotice;
 	public static GameObject Caution;			// Caution
 	public static Text txt_caution;
 	public static GameObject Loading;			// Loading
@@ -148,16 +150,34 @@ public class UISet : MonoBehaviour {
 	}
 	public static void Ebtn_friends() {
 		if (uiLock) { return; }
-		
+		 
 	}
 	public static void Ebtn_lobbyexit() {
 		if (uiLock) { return; }
 		ActiveUI (UIState.MAIN_LOGIN);
 	}
 	// ReadiedRoom
-	public static void EPlayers() {
+	public static void EPlayers(string _player) {
 		if (uiLock) { return; }
-		// player 확인 필요
+		if (UICard.selectedCard == -1) { Debug.Log ("notSelected!"); return; }
+
+		bool isNeedTarget = (UICard.selectedCard == 30 || UICard.selectedCard == 34 || 
+		                     UICard.selectedCard == 37 || UICard.selectedCard == 60 ||
+		                     UICard.selectedCard == 61 || UICard.selectedCard == 69);
+
+		if (isNeedTarget) {
+			if (_player.Equals (StructManager.user.id)) {
+				SetChat("<SYSTEM> 현재 선택된 카드(" + CardGenerator.GetCardNameFromNum(UICard.selectedCard) + 
+				        ")는 자기자신에게 사용할 수 없습니다.");
+				return;
+			} else {
+				string msg = UICard.selectedCard + " " + _player;
+				comm.SendMessageToServer('N', msg);
+				UICard.cards[UICard.selectedCardNum].CardDestroy();
+				UICard.selectedCard = -1;
+				UICard.selectedCardNum = -1;
+			}
+		}
 	}
 	public static void Ebtn_chatenter() {
 		if (uiLock) { return; }

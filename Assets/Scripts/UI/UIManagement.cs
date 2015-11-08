@@ -16,6 +16,8 @@ public class UIManagement : MonoBehaviour {
 	public static bool roomUpdateFlag;
 	public static string status;
 	public static bool hpUpdateFlag;
+	public static string timerNotice;
+	public static string cardNotice;
 	private int frameCounter;
 	
 	//for debugging
@@ -32,15 +34,13 @@ public class UIManagement : MonoBehaviour {
 		chatUpdateFlag = false;
 		status = "";
 		hpUpdateFlag = false;
+		timerNotice = "";
+		cardNotice = "";
 		frameCounter = 0;
 		
 		//for debugging
 		debug = "";
-		new UICard (CardGenerator.GetCard (CardType.INFO)).SetOrder(0);
-		new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder(1);
-		new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder(2);
-		//int t = CardGenerator.GetCard (CardGenerator.CardType.INFO);
-		
+
 		// Initialize UI Set
 		// *Main
 		UISet.Main = GameObject.Find("Main");
@@ -92,6 +92,8 @@ public class UIManagement : MonoBehaviour {
 		// StartedRoom
 		UISet.Set_StartedRoom = GameObject.Find ("Set_StartedRoom");
 		UISet.txt_status = GameObject.Find ("txt_status").GetComponent<Text> ();
+		UISet.txt_timernotice = GameObject.Find ("txt_timernotice").GetComponent<Text> ();
+		UISet.txt_cardnotice = GameObject.Find ("txt_cardnotice").GetComponent<Text> ();
 		// *Caution
 		UISet.Caution = GameObject.Find("Caution");
 		UISet.txt_caution = GameObject.Find("txt_caution").GetComponent<Text>();
@@ -123,7 +125,9 @@ public class UIManagement : MonoBehaviour {
 		UISet.btn_friends.onClick.AddListener (UISet.Ebtn_friends);
 		UISet.btn_lobbyexit.onClick.AddListener (UISet.Ebtn_lobbyexit);
 		foreach (Button player in UISet.Players) {
-			player.onClick.AddListener(UISet.EPlayers);
+			string _playerID = player.GetComponentInChildren<Text>().text;
+			player.onClick.RemoveAllListeners();
+			player.onClick.AddListener(delegate{UISet.EPlayers(_playerID);});
 		}
 		UISet.btn_chatenter.onClick.AddListener (UISet.Ebtn_chatenter);
 		UISet.btn_roominvite.onClick.AddListener (UISet.Ebtn_roominvite);
@@ -261,6 +265,11 @@ public class UIManagement : MonoBehaviour {
 			UISet.Players[x].GetComponentInChildren<Text>().text = player.id;
 			x++;
 		}
+		foreach (Button player in UISet.Players) {
+			string _playerID = player.GetComponentInChildren<Text>().text;
+			player.onClick.RemoveAllListeners();
+			player.onClick.AddListener(delegate{UISet.EPlayers(_playerID);});
+		}
 		//for(int i=0; i<StructManager.myRoomInfo.users.Count; i++) {
 		//	UISet.Players[i].GetComponentInChildren<Text>().text = StructManager.myRoomInfo.users[i].id;
 		//}
@@ -272,6 +281,14 @@ public class UIManagement : MonoBehaviour {
 		}
 		if (hpUpdateFlag) {
 			hpUpdateFlag = false;
+		}
+		if (!timerNotice.Equals ("")) {
+			UISet.txt_timernotice.text = timerNotice;
+			timerNotice = "";
+		}
+		if (!cardNotice.Equals ("")) {
+			UISet.txt_cardnotice.text = cardNotice;
+			timerNotice = "";
 		}
 	}
 	void UILoadingProcessing() {

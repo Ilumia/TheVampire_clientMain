@@ -1,12 +1,17 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System.Collections.Generic;
 
 public class UICard {
 	public enum CardSize { SMALL, BIG }
 	enum CardType { ABILITY, INFO, BATTLE }
 
 	static GameObject cardSet = GameObject.Find ("CardSet");
+	static public int selectedCardNum = -1;
+	static public int selectedCard = -1;
+	static public int gettedCard = 3;
+	static public List<UICard> cards = new List<UICard> ();
 
 	static Vector2 defaultCardPos_small = new Vector2 (-211.9f, 0);
 	static float cardSpace = 139.9f;
@@ -39,7 +44,31 @@ public class UICard {
 		SetCard (cardID);
 	}
 	void OnClick() {
-		Debug.Log (id + " is clicked!");
+		if (size == CardSize.SMALL) {
+
+		} else {
+
+		}
+		if (id == 30 || id == 34 || id == 37 || id == 60 || id == 61 || id == 69) {
+			if (selectedCard == id) {
+				selectedCard = -1;
+				selectedCardNum = -1;
+				return;
+			}
+			selectedCard = id;
+			selectedCardNum = 0;
+		} else {
+			Communication.Instance().SendMessageToServer('M', id.ToString());
+			CardDestroy();
+		}
+	}
+	public void CardDestroy () {
+		List<GameObject> children = new List<GameObject>();
+		foreach (Transform child in card.transform) children.Add(child.gameObject);
+		foreach (GameObject child in children) {
+			Object.Destroy(child);
+		}
+		Object.Destroy (card);
 	}
 	public void SetSize (CardSize _size) {
 		size = _size;
@@ -84,7 +113,8 @@ public class UICard {
 	void InitCard() {
 		card = new GameObject();
 		card.name = "card";
-		card.transform.parent = GameObject.Find ("Canvas").transform;
+		card.transform.SetParent (GameObject.Find ("Canvas").transform);
+		//card.transform.parent = GameObject.Find ("Canvas").transform;
 		card.transform.localScale = Vector3.one;
 		card.AddComponent<CanvasRenderer>();
 		cardTransform = card.AddComponent<RectTransform> ();
@@ -103,7 +133,8 @@ public class UICard {
 		
 		GameObject nameObject = new GameObject ();
 		nameObject.name = "Text";
-		nameObject.transform.parent = card.transform;
+		nameObject.transform.SetParent(card.transform);
+		//nameObject.transform.parent = card.transform;
 		nameObject.transform.localScale = Vector3.one;
 		RectTransform nameTransform = nameObject.AddComponent<RectTransform> ();
 		nameTransform.sizeDelta = nameSize_small;
@@ -117,7 +148,8 @@ public class UICard {
 		
 		GameObject imageObject = new GameObject ();
 		imageObject.name = "Image";
-		imageObject.transform.parent = card.transform;
+		imageObject.transform.SetParent(card.transform);
+		//imageObject.transform.parent = card.transform;
 		imageObject.transform.localScale = Vector3.one;
 		RectTransform imageTransform = imageObject.AddComponent<RectTransform> ();
 		imageTransform.sizeDelta = imageSize_small;
@@ -125,7 +157,8 @@ public class UICard {
 		image = imageObject.AddComponent<Image> ();
 		image.sprite = Resources.Load<Sprite> ("CardSet/00");
 		if (size == CardSize.SMALL) {
-			card.transform.parent = cardSet.transform;
+			card.transform.SetParent(cardSet.transform);
+			//card.transform.parent = cardSet.transform;
 			card.transform.localScale = Vector3.one;
 			cardTransform.sizeDelta = cardSize_small;
 			nameTransform.sizeDelta = nameSize_small;
