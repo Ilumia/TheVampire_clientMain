@@ -136,12 +136,14 @@ public class UISet : MonoBehaviour {
 		UISet.SetUILock(true);
 	}
 	public static void Ebtn_createroom() {
-		comm.SendMessageToServer ('C', "t");
 		if (uiLock) { return; }
+		comm.SendMessageToServer ('C', "t");
+		UISet.SetUILock(true);
 	}
 	public static void Ebtn_createprivateroom() {
-		comm.SendMessageToServer ('C', "f");
 		if (uiLock) { return; }
+		comm.SendMessageToServer ('C', "f");
+		UISet.SetUILock(true);
 	}
 	public static void Ebtn_friends() {
 		if (uiLock) { return; }
@@ -288,5 +290,8 @@ public class UISet : MonoBehaviour {
 	public static void SetChat (string text) {
 		StructManager.myRoomInfo.chatLog += text + "\n";
 		UIManagement.chatUpdateFlag = true;
+	}
+	public static void SetDebug (string text) {
+		UIManagement.debug = text;
 	}
 }

@@ -15,6 +15,9 @@ public class UIManagement : MonoBehaviour {
 	public static bool chatUpdateFlag;
 	public static bool roomUpdateFlag;
 	private int frameCounter;
+	
+	//for debugging
+	public static string debug;
 
 	void Awake () {
 		eventSystem = EventSystem.current;
@@ -26,6 +29,9 @@ public class UIManagement : MonoBehaviour {
 		roomUpdateFlag = false;
 		chatUpdateFlag = false;
 		frameCounter = 0;
+		
+		//for debugging
+		debug = "";
 
 		// Initialize UI Set
 		// *Main
@@ -117,18 +123,27 @@ public class UIManagement : MonoBehaviour {
 		UISet.autoLoginFlag = true;
 
 	}
-	
+
+	void LateUpdate() {
+		try {
+			UIEventProcessing ();
+			UILockProcessing ();
+			UILockTimer ();
+			UICautionProcessing ();
+			UITabProcessing ();
+			UIEnterProcessing ();
+			UIChatUpdateProcessing ();
+			UIRoomUpdateProcessing ();
+			UILoadingProcessing ();
+			
+			//for debugging
+			UIDebuggingProcessing ();
+		} catch (UnityException e) {
+			debug = e.StackTrace;
+		}
+	}
 	// Update is called once per frame
 	void Update () {
-		UIEventProcessing ();
-		UILockProcessing ();
-		UILockTimer ();
-		UICautionProcessing ();
-		UITabProcessing ();
-		UIEnterProcessing ();
-		UIChatUpdateProcessing ();
-		UIRoomUpdateProcessing ();
-		UILoadingProcessing ();
 	}
 	void UIEventProcessing() {
 		if (UIEventList.Count == 0) {
@@ -243,6 +258,14 @@ public class UIManagement : MonoBehaviour {
 		frameCounter = 0;
 		if (UISet.Loading.activeInHierarchy) {
 			UISet.img_loadcircle.transform.Rotate(Vector3.back, 30.0f);
+		}
+	}
+	
+	//for debugging
+	void UIDebuggingProcessing() {
+		if (!debug.Equals ("")) {
+			GameObject.Find("debug").GetComponent<Text>().text = debug;
+			debug = "";
 		}
 	}
 }

@@ -28,7 +28,7 @@ public class Message
 		if (_data.Length < 4)
 			return;
 		length = BitConverter.ToInt32(_data, 0);
-		data = new byte[Length + 1];
+		data = new byte[Length + 3];
 	}
 	public byte[] DataBuffer { get { return data; } }
 	public byte[] GetBuffer()

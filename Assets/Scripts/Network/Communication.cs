@@ -98,6 +98,7 @@ public partial class Communication {
 			try {
 				byte[] _data = Compression.DecompressToBytes(message.Data);
 				ReceiveProcessing(message.Type, _data);
+				UISet.SetDebug("RecvType: " + (char)message.Type + "\nRecvData: " + Encoding.Unicode.GetString (message.Data));
 			} catch(Exception _e) { 
 				Console.WriteLine(_e.Message);
 				Console.WriteLine(_e.StackTrace);
