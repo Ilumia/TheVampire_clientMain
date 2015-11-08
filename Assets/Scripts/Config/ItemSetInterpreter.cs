@@ -26,7 +26,7 @@ public class ItemSetInterpreter {
 			Int32.TryParse(tmpNum[2], out informationNum);
 			Int32.TryParse(tmpNum[3], out battleNum);
 			int i = 1;
-			for(; i < abilityNum + 2; i++) {
+			for(; i < abilityNum + 1; i++) {
 				string[] tmp = cardSet[i].Split('\t');
 				Ability _ability = new Ability();
 				int number;
@@ -42,7 +42,7 @@ public class ItemSetInterpreter {
 				_ability.description = tmp[5];
 				abilitySet.Add(number, _ability);
 			}
-			for(; i < informationNum + abilityNum + 2; i++) {
+			for(; i < informationNum + abilityNum + 1; i++) {
 				string[] tmp = cardSet[i].Split('\t');
 				InfoCard _info = new InfoCard();
 				int number;

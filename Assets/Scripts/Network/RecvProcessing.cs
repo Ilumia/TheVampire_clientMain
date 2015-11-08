@@ -49,7 +49,7 @@ public partial class Communication {
 			//GameInfoProc(_data);
 			break;
 		case 'm':
-			//GameTurnInfoProc(_data);
+			GameTurnInfoProc(_data);
 			break;
 		case 'n':
 			RoomInOutProc(_data);
@@ -118,15 +118,15 @@ public partial class Communication {
 			UISet.ActiveUI (UISet.UIState.ROOM_READIED_PRIVATE);
 			isPublic = false;
 		}
-		List<Player> users = new List<Player> ();
+		Dictionary<string, Player> users = new Dictionary<string, Player> ();
 		for (int i=4; i<tempStringArray.Length; i++) {
 			if(tempStringArray[i].Equals("")) { break; }
 			Player player = new Player(tempStringArray[i]);
-			users.Add(player);
+			users.Add(tempStringArray[i], player);
 		}
 		if (StructManager.myRoomInfo == null) {
 			StructManager.myRoomInfo = new RoomInfo (roomNum, totalNum, maxNum);
-			StructManager.myRoomInfo.owner = users [0];
+			StructManager.myRoomInfo.owner = tempStringArray[4];
 		}
 		StructManager.myRoomInfo.RoomInfoUpdate(totalNum, maxNum, isPublic, users);
 
@@ -156,9 +156,27 @@ public partial class Communication {
 		StructManager.myRoomInfo.roomState = 1;
 		UISet.ActiveUI (UISet.UIState.ROOM_STARTED);
 	}
+	private void GameInfoProc(string data) {
+		UISet.SetChat ("<SYSTEM> " + data);
+	}
+	private void GameTurnInfoProc(string data) {
+		string status = "";
+		string[] tmp = data.Split (' ');
+		int newRoomState = Int32.Parse (tmp [0]);
+		StructManager.myRoomInfo.roomState = newRoomState;
+		for (int i = 1; i < 8; i+=2) {
+			int hp = Int32.Parse (tmp[i+1]);
+			StructManager.myRoomInfo.users[tmp[i]].hp = hp;
+			if(tmp[i].Equals(StructManager.user.id)) {
+				status = "제 " + newRoomState + " 턴" + "\n\nHP: " + hp + " / 100";
+				UIManagement.status = status;
+			}
+		}
+		UIManagement.hpUpdateFlag = true;
+	}
 	private void RoomInOutProc(string data) {
 		string[] tmp = data.Split (' ');
-		string _message = tmp [1] + "님이 ";
+		string _message = "<SYSTEM> " + tmp [1] + "님이 ";
 		if (tmp [0].Equals ("i")) {
 			_message += "입장하셨습니다.";
 			if(StructManager.myRoomInfo.users.Count == 4) {
@@ -171,8 +189,10 @@ public partial class Communication {
 	}
 	private void TimerUpdateProc(string data) {
 		float tmp = float.Parse (data);
-		if (tmp <= 3.0f) {
-			UISet.SetChat (tmp + "초 후 게임이 시작됩니다.");
+		if (StructManager.myRoomInfo.roomState > 1) {
+			if (tmp <= 3.0f) {
+				UISet.SetChat ("<SYSTEM> " + tmp + "초 후 게임이 시작됩니다.");
+			}
 		}
 	}
 	private void ItemListProc(string data) {

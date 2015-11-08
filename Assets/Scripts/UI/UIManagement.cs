@@ -14,6 +14,8 @@ public class UIManagement : MonoBehaviour {
 	public static List<string> UIRoomList;
 	public static bool chatUpdateFlag;
 	public static bool roomUpdateFlag;
+	public static string status;
+	public static bool hpUpdateFlag;
 	private int frameCounter;
 	
 	//for debugging
@@ -28,11 +30,17 @@ public class UIManagement : MonoBehaviour {
 		UIRoomList = new List<string> ();
 		roomUpdateFlag = false;
 		chatUpdateFlag = false;
+		status = "";
+		hpUpdateFlag = false;
 		frameCounter = 0;
 		
 		//for debugging
 		debug = "";
-
+		new UICard (CardGenerator.GetCard (CardType.INFO)).SetOrder(0);
+		new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder(1);
+		new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder(2);
+		//int t = CardGenerator.GetCard (CardGenerator.CardType.INFO);
+		
 		// Initialize UI Set
 		// *Main
 		UISet.Main = GameObject.Find("Main");
@@ -66,13 +74,6 @@ public class UIManagement : MonoBehaviour {
 		UISet.btn_lobbyexit = GameObject.Find("btn_lobbyexit").GetComponent<Button>();
 		// *Room
 		UISet.Room = GameObject.Find ("Room");
-		// ReadiedRoom
-		UISet.Set_ReadiedRoom = GameObject.Find ("Set_ReadiedRoom");
-		UISet.txt_profile = GameObject.Find ("txt_profile").GetComponent<Text> ();
-		UISet.txt_roominfo = GameObject.Find ("txt_roominfo").GetComponent<Text> ();
-		UISet.btn_roominvite = GameObject.Find ("btn_roominvite").GetComponent<Button>();
-		UISet.btn_roomexit = GameObject.Find ("btn_roomexit").GetComponent<Button>();
-		UISet.Set_StartedRoom = GameObject.Find ("Set_StartedRoom");
 		UISet.Players = new Button[4];
 		for (int i=0; i<UISet.Players.Length; i++) {
 			UISet.Players[i] = GameObject.Find("Player (" + i + ")").GetComponent<Button>();
@@ -82,10 +83,19 @@ public class UIManagement : MonoBehaviour {
 		UISet.scroll_chat = GameObject.Find ("scroll_chat").GetComponent<Scrollbar> ();
 		UISet.input_chat = GameObject.Find ("input_chat").GetComponent<InputField> ();
 		UISet.btn_chatenter = GameObject.Find ("btn_chatenter").GetComponent<Button> ();
-		// Caution
+		// ReadiedRoom
+		UISet.Set_ReadiedRoom = GameObject.Find ("Set_ReadiedRoom");
+		UISet.txt_profile = GameObject.Find ("txt_profile").GetComponent<Text> ();
+		UISet.txt_roominfo = GameObject.Find ("txt_roominfo").GetComponent<Text> ();
+		UISet.btn_roominvite = GameObject.Find ("btn_roominvite").GetComponent<Button>();
+		UISet.btn_roomexit = GameObject.Find ("btn_roomexit").GetComponent<Button>();
+		// StartedRoom
+		UISet.Set_StartedRoom = GameObject.Find ("Set_StartedRoom");
+		UISet.txt_status = GameObject.Find ("txt_status").GetComponent<Text> ();
+		// *Caution
 		UISet.Caution = GameObject.Find("Caution");
 		UISet.txt_caution = GameObject.Find("txt_caution").GetComponent<Text>();
-		// Loading
+		// *Loading
 		UISet.Loading = GameObject.Find ("Loading");
 		UISet.img_loadcircle = GameObject.Find ("img_loadcircle").GetComponent<Image> ();
 		
@@ -121,7 +131,6 @@ public class UIManagement : MonoBehaviour {
 
 		UISet.ActiveUI (UISet.UIState.MAIN);
 		UISet.autoLoginFlag = true;
-
 	}
 
 	void LateUpdate() {
@@ -134,6 +143,7 @@ public class UIManagement : MonoBehaviour {
 			UIEnterProcessing ();
 			UIChatUpdateProcessing ();
 			UIRoomUpdateProcessing ();
+			UIStatusProcessing();
 			UILoadingProcessing ();
 			
 			//for debugging
@@ -235,7 +245,7 @@ public class UIManagement : MonoBehaviour {
 		string roomInfo = "방 번호: ";
 		roomInfo += StructManager.myRoomInfo.roomNumber.ToString () + "\n";
 		roomInfo += "방 개설자: ";
-		roomInfo += StructManager.myRoomInfo.owner.id + "\n";
+		roomInfo += StructManager.myRoomInfo.owner + "\n";
 		if (StructManager.myRoomInfo.isPublic) {
 			roomInfo += "공개방\n";
 		} else {
@@ -246,8 +256,22 @@ public class UIManagement : MonoBehaviour {
 		roomInfo += StructManager.myRoomInfo.maximumNumber.ToString () + "\n";
 		UISet.txt_roominfo.text = roomInfo;
 
-		for(int i=0; i<StructManager.myRoomInfo.users.Count; i++) {
-			UISet.Players[i].GetComponentInChildren<Text>().text = StructManager.myRoomInfo.users[i].id;
+		int x = 0;
+		foreach (Player player in StructManager.myRoomInfo.users.Values) {
+			UISet.Players[x].GetComponentInChildren<Text>().text = player.id;
+			x++;
+		}
+		//for(int i=0; i<StructManager.myRoomInfo.users.Count; i++) {
+		//	UISet.Players[i].GetComponentInChildren<Text>().text = StructManager.myRoomInfo.users[i].id;
+		//}
+	}
+	void UIStatusProcessing() {
+		if (!status.Equals ("")) {
+			UISet.txt_status.text = status;
+			status = "";
+		}
+		if (hpUpdateFlag) {
+			hpUpdateFlag = false;
 		}
 	}
 	void UILoadingProcessing() {

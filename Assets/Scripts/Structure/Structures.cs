@@ -5,8 +5,8 @@ public class RoomInfo {
 	public int totalNumber;
 	public int maximumNumber;
 	public bool isPublic;
-	public List<Player> users;
-	public Player owner;
+	public Dictionary<string, Player> users;
+	public string owner;
 	public int roomState;   // -1: 시작 전, 0: 게임종료, 1이상의 양수: 진행회차
 	public string chatLog;
 
@@ -18,15 +18,15 @@ public class RoomInfo {
 		totalNumber = _totalNumber;
 		maximumNumber = _maximumNumber;
 		isPublic = true;
-		users = new List<Player>();
-		owner = new Player ();
+		users = new Dictionary<string, Player>();
+		owner = "";
 		roomState = -1;
 		chatLog = "";
 	}
 	public void RoomUpdate(int _totalNumber) {
 		this.totalNumber = _totalNumber;
 	}
-	public void RoomInfoUpdate(int _totalNumber, int _maximumNumber, bool _isPublic, List<Player> _users) {
+	public void RoomInfoUpdate(int _totalNumber, int _maximumNumber, bool _isPublic, Dictionary<string, Player> _users) {
 		totalNumber = _totalNumber;
 		maximumNumber = _maximumNumber;
 		isPublic = _isPublic;
@@ -35,38 +35,18 @@ public class RoomInfo {
 
 }
 
-public enum PlayerState { UNSET, TURN_ON, TURN_OFF, DEFEATED };
-public enum PlayerJob { UNSET, VAMPIRE, HUNTER };
 public class Player {
 	public string id;
-	public PlayerJob job;
-	public PlayerState state;
+	public int hp;
 	public bool isAI;
 	public Player() {
-		job = PlayerJob.UNSET;
-		state = PlayerState.UNSET;
+		hp = 100;
 		isAI = false;
 	}
 	public Player(string id) {
 		this.id = id;
-		job = PlayerJob.UNSET;
-		state = PlayerState.UNSET;
+		hp = 100;
 		isAI = false;
-	}
-	public void InitPlayer(PlayerJob job, bool isAI) {
-		this.job = job;
-		this.isAI = isAI;
-		/*  초기아이템 및 상태정의
-            switch (job)
-            {
-                case PlayerJob.:
-                    break;
-                case PlayerJob.:
-                    break;
-                case PlayerJob.:
-                    break;
-            }
-            */
 	}
 }
 public class UserInfo {
@@ -96,6 +76,7 @@ public class Item {
 		battleCardSet = _battleCardSet;
 	}
 }
+public enum PlayerJob { UNSET, VAMPIRE, HUNTER };
 public class Ability {
 	public string abilityName;
 	public PlayerJob jobClass;

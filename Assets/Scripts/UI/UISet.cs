@@ -50,6 +50,7 @@ public class UISet : MonoBehaviour {
 	public static Button btn_roomexit;
 	public static Button btn_roominvite;
 	public static GameObject Set_StartedRoom;	// StartedRoom Set
+	public static Text txt_status;
 	public static GameObject Caution;			// Caution
 	public static Text txt_caution;
 	public static GameObject Loading;			// Loading
