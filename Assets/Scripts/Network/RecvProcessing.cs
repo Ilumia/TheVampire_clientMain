@@ -175,20 +175,14 @@ public partial class Communication {
 		}
 		UIManagement.hpUpdateFlag = true;
 		UIManagement.timerNotice = "15";
-
 		UICard.gettedCard++;
-		UICard newCard = new UICard(CardGenerator.GetCard(CardType.BATTLE));
-		newCard.SetOrder(UICard.cards.Count);
-		UICard.cards.Add(newCard);
+		UIManagement.cardNotice = UICard.gettedCard.ToString ();
 	}
 	private void RoomInOutProc(string data) {
 		string[] tmp = data.Split (' ');
 		string _message = "<SYSTEM> " + tmp [1] + "님이 ";
 		if (tmp [0].Equals ("i")) {
 			_message += "입장하셨습니다.";
-			if(StructManager.myRoomInfo.users.Count == 4) {
-				UISet.SetChat ("10초 후 자동으로 게임이 시작됩니다.");
-			}
 		} else if (tmp [0].Equals ("o")) {
 			_message += "퇴장하셨습니다.";
 		}
@@ -196,7 +190,7 @@ public partial class Communication {
 	}
 	private void TimerUpdateProc(string data) {
 		float tmp = float.Parse (data);
-		if (StructManager.myRoomInfo.roomState == 0) {
+		if (StructManager.myRoomInfo.roomState == -1) {
 			if (tmp <= 3.0f) {
 				UISet.SetChat ("<SYSTEM> " + tmp + "초 후 게임이 시작됩니다.");
 			}

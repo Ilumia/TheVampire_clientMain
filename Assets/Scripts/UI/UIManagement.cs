@@ -23,6 +23,17 @@ public class UIManagement : MonoBehaviour {
 	//for debugging
 	public static string debug;
 
+	void Start () {
+		UICard newCard = new UICard(CardGenerator.GetCard(CardType.BATTLE));
+		newCard.SetOrder(0);
+		new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (1);
+		new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (2);
+		new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (3);
+		new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (4);
+		new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (5);
+		new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (6);
+	}
+
 	void Awake () {
 		eventSystem = EventSystem.current;
 		UIEventList = new List<UISet.UIState> ();
@@ -259,6 +270,10 @@ public class UIManagement : MonoBehaviour {
 		roomInfo += StructManager.myRoomInfo.totalNumber.ToString () + " / ";
 		roomInfo += StructManager.myRoomInfo.maximumNumber.ToString () + "\n";
 		UISet.txt_roominfo.text = roomInfo;
+		
+		if(StructManager.myRoomInfo.users.Count == 4) {
+			UISet.SetChat ("10초 후 자동으로 게임이 시작됩니다.");
+		}
 
 		int x = 0;
 		foreach (Player player in StructManager.myRoomInfo.users.Values) {
@@ -270,9 +285,6 @@ public class UIManagement : MonoBehaviour {
 			player.onClick.RemoveAllListeners();
 			player.onClick.AddListener(delegate{UISet.EPlayers(_playerID);});
 		}
-		//for(int i=0; i<StructManager.myRoomInfo.users.Count; i++) {
-		//	UISet.Players[i].GetComponentInChildren<Text>().text = StructManager.myRoomInfo.users[i].id;
-		//}
 	}
 	void UIStatusProcessing() {
 		if (!status.Equals ("")) {

@@ -7,13 +7,13 @@ public class UICard {
 	public enum CardSize { SMALL, BIG }
 	enum CardType { ABILITY, INFO, BATTLE }
 
-	static GameObject cardSet = GameObject.Find ("CardSet");
+	static RectTransform cardSetTransform = GameObject.Find ("CardSet").GetComponent<RectTransform>();
 	static public int selectedCardNum = -1;
 	static public int selectedCard = -1;
 	static public int gettedCard = 3;
 	static public List<UICard> cards = new List<UICard> ();
 
-	static Vector2 defaultCardPos_small = new Vector2 (-211.9f, 0);
+	static Vector2 defaultCardPos_small = new Vector2 (-557, 0);
 	static float cardSpace = 139.9f;
 	static Vector2 cardSize_small = new Vector2(136.2f, 174);
 	//static Vector2 cardSize_big = new Vector2 (10, 10);
@@ -28,6 +28,7 @@ public class UICard {
 
 	GameObject card;
 	RectTransform cardTransform;
+	public int number;
 	public int id;
 	CardSize size = CardSize.SMALL;
 	CardType type;
@@ -157,7 +158,7 @@ public class UICard {
 		image = imageObject.AddComponent<Image> ();
 		image.sprite = Resources.Load<Sprite> ("CardSet/00");
 		if (size == CardSize.SMALL) {
-			card.transform.SetParent(cardSet.transform);
+			card.transform.SetParent(cardSetTransform);
 			//card.transform.parent = cardSet.transform;
 			card.transform.localScale = Vector3.one;
 			cardTransform.sizeDelta = cardSize_small;
