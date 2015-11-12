@@ -30,6 +30,8 @@ public class UICard {
 	RectTransform cardTransform;
 	public int number;
 	public int id;
+	int serial;
+	static int nextSerial = 0;
 	CardSize size = CardSize.SMALL;
 	CardType type;
 	Text name;
@@ -62,8 +64,18 @@ public class UICard {
 			Communication.Instance().SendMessageToServer('M', id.ToString());
 			CardDestroy();
 		}
+		UIManagement.cardUpdateFlag = true;
 	}
 	public void CardDestroy () {
+		//UICard.cards.Remove(this);
+		for (int i=0; i<UICard.cards.Count; i++) {
+			if(this.serial == UICard.cards[i].serial) {
+				UICard.cards.RemoveAt(i);
+				//UICard.cards.Remove(this);
+			}
+		}
+		foreach (UICard _card in UICard.cards) {
+		}
 		List<GameObject> children = new List<GameObject>();
 		foreach (Transform child in card.transform) children.Add(child.gameObject);
 		foreach (GameObject child in children) {
@@ -89,6 +101,8 @@ public class UICard {
 	public void SetCard(int cardID) {
 		InitCard ();
 		id = cardID;
+		serial = nextSerial;
+		nextSerial++;
 		string cardName = "";
 		string cardImage = "";
 		if (cardID < 30) {
@@ -145,7 +159,7 @@ public class UICard {
 		name.text = "test";
 		name.color = Color.white;
 		name.alignment = TextAnchor.MiddleCenter;
-		name.fontSize = 22;
+		name.fontSize = 25;
 		name.font = Resources.Load<Font> ("Font/NanumBarunGothic");
 		
 		GameObject imageObject = new GameObject ();

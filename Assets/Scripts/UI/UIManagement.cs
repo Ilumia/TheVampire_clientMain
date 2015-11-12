@@ -19,6 +19,7 @@ public class UIManagement : MonoBehaviour {
 	public static string timerNotice;
 	public static string cardNotice;
 	private int frameCounter;
+	public static bool cardUpdateFlag;
 	
 	//for debugging
 	public static string debug;
@@ -30,23 +31,10 @@ public class UIManagement : MonoBehaviour {
 		UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (3));
 		UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (4));
 		UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (5));
-		/*
 		UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (6));
 		UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (7));
 		UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (8));
 		UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (9));
-		UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (10));
-		UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (11));
-		UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (12));
-		UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (13));
-		UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (14));
-		UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (15));
-		UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (16));
-		UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (17));
-		UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (18));
-		UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (19));
-		UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (20));
-		*/
 	}
 
 	void Awake () {
@@ -63,6 +51,7 @@ public class UIManagement : MonoBehaviour {
 		timerNotice = "";
 		cardNotice = "";
 		frameCounter = 0;
+		cardUpdateFlag = false;
 		
 		//for debugging
 		debug = "";
@@ -121,6 +110,8 @@ public class UIManagement : MonoBehaviour {
 		UISet.txt_timernotice = GameObject.Find ("txt_timernotice").GetComponent<Text> ();
 		UISet.txt_cardnotice = GameObject.Find ("txt_cardnotice").GetComponent<Text> ();
 		UISet.scroll_cardset = GameObject.Find ("scroll_cardset").GetComponent<Scrollbar> ();
+		UISet.btn_getinfocard = GameObject.Find ("btn_getinfocard").GetComponent<Button> ();
+		UISet.btn_getbattlecard = GameObject.Find ("btn_getbattlecard").GetComponent<Button> ();
 		// *Caution
 		UISet.Caution = GameObject.Find("Caution");
 		UISet.txt_caution = GameObject.Find("txt_caution").GetComponent<Text>();
@@ -151,6 +142,7 @@ public class UIManagement : MonoBehaviour {
 		UISet.btn_createprivateroom.onClick.AddListener (UISet.Ebtn_createprivateroom);
 		UISet.btn_friends.onClick.AddListener (UISet.Ebtn_friends);
 		UISet.btn_lobbyexit.onClick.AddListener (UISet.Ebtn_lobbyexit);
+		// Room
 		foreach (Button player in UISet.Players) {
 			string _playerID = player.GetComponentInChildren<Text>().text;
 			player.onClick.RemoveAllListeners();
@@ -159,6 +151,8 @@ public class UIManagement : MonoBehaviour {
 		UISet.btn_chatenter.onClick.AddListener (UISet.Ebtn_chatenter);
 		UISet.btn_roominvite.onClick.AddListener (UISet.Ebtn_roominvite);
 		UISet.btn_roomexit.onClick.AddListener (UISet.Ebtn_roomexit);
+		UISet.btn_getinfocard.onClick.AddListener (UISet.Ebtn_getinfocard);
+		UISet.btn_getbattlecard.onClick.AddListener (UISet.Ebtn_getbattlecard);
 
 		UISet.ActiveUI (UISet.UIState.MAIN);
 		UISet.autoLoginFlag = true;
@@ -332,8 +326,7 @@ public class UIManagement : MonoBehaviour {
 	}
 	void UICardSetProcessing() {
 		float count = UICard.cards.Count;
-		//count -= 3;
-		if (count > 4) {
+		if (count > 3) {
 			count -= 3;
 		} else {
 			count = 0; 
@@ -342,6 +335,11 @@ public class UIManagement : MonoBehaviour {
 		if (UISet.scroll_cardset.value > value) {
 			UISet.scroll_cardset.value = value;
 			Debug.Log (UISet.scroll_cardset.value + " : " + value);
+		}
+		if (cardUpdateFlag) {
+			for(int i = 0; i < UICard.cards.Count; i++) {
+				UICard.cards[i].SetOrder(i);
+			}
 		}
 	}
 	

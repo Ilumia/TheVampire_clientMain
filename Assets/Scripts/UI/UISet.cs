@@ -54,6 +54,8 @@ public class UISet : MonoBehaviour {
 	public static Text txt_timernotice;
 	public static Text txt_cardnotice;
 	public static Scrollbar scroll_cardset;
+	public static Button btn_getinfocard;
+	public static Button btn_getbattlecard;
 	public static GameObject Caution;			// Caution
 	public static Text txt_caution;
 	public static GameObject Loading;			// Loading
@@ -193,6 +195,27 @@ public class UISet : MonoBehaviour {
 		comm.SendMessageToServer ('H', StructManager.myRoomInfo.roomNumber.ToString());
 		StructManager.myRoomInfo = null;
 		UISet.ActiveUI (UISet.UIState.LOBBY_LOBBY);
+	}
+	// StartedRoom
+	public static void Ebtn_getinfocard() {
+		SetUILock (true);
+		if (UICard.gettedCard > 0) {
+			UICard.gettedCard--;
+			UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.INFO)).SetOrder (0));
+		}
+		SetUILock (false);
+		UIManagement.cardUpdateFlag = true;
+		UIManagement.cardNotice = UICard.gettedCard.ToString ();
+	}
+	public static void Ebtn_getbattlecard() {
+		SetUILock (true);
+		if (UICard.gettedCard > 0) {
+			UICard.gettedCard--;
+			UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (0));
+		}
+		SetUILock (false);
+		UIManagement.cardUpdateFlag = true;
+		UIManagement.cardNotice = UICard.gettedCard.ToString ();
 	}
 
 	public static void SetUILock(bool check) {
