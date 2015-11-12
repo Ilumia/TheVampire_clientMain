@@ -24,16 +24,29 @@ public class UIManagement : MonoBehaviour {
 	public static string debug;
 
 	void Start () {
-		UICard newCard = new UICard(CardGenerator.GetCard(CardType.BATTLE)).SetOrder (0);
-		UICard.cards.Add (newCard);
-		UICard c1 = new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (1);
-		UICard.cards.Add (c1);
-		UICard c2 = new UICard (CardGenerator.GetCard (CardType.INFO)).SetOrder (2);
-		UICard.cards.Add (c2);
-		UICard c3 = new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (3);
-		UICard.cards.Add (c3);
-		UICard c4 = new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (4);
-		UICard.cards.Add (c4);
+		UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (0));
+		UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (1));
+		UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (2));
+		UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (3));
+		UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (4));
+		UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (5));
+		/*
+		UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (6));
+		UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (7));
+		UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (8));
+		UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (9));
+		UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (10));
+		UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (11));
+		UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (12));
+		UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (13));
+		UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (14));
+		UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (15));
+		UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (16));
+		UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (17));
+		UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (18));
+		UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (19));
+		UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (20));
+		*/
 	}
 
 	void Awake () {
@@ -319,8 +332,13 @@ public class UIManagement : MonoBehaviour {
 	}
 	void UICardSetProcessing() {
 		float count = UICard.cards.Count;
-		if(count > 4) { count -= 3; }
-		float value = count / 71.006433f;
+		//count -= 3;
+		if (count > 4) {
+			count -= 3;
+		} else {
+			count = 0; 
+		}
+		float value = count / 68.00643316654753f;
 		if (UISet.scroll_cardset.value > value) {
 			UISet.scroll_cardset.value = value;
 			Debug.Log (UISet.scroll_cardset.value + " : " + value);
