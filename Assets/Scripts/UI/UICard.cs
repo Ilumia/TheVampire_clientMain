@@ -13,7 +13,7 @@ public class UICard {
 	static public int gettedCard = 3;
 	static public List<UICard> cards = new List<UICard> ();
 
-	static Vector2 defaultCardPos_small = new Vector2 (-557, 0);
+	static Vector2 defaultCardPos_small = new Vector2 (-4966.9f, 0);
 	static float cardSpace = 139.9f;
 	static Vector2 cardSize_small = new Vector2(136.2f, 174);
 	//static Vector2 cardSize_big = new Vector2 (10, 10);
@@ -74,10 +74,11 @@ public class UICard {
 	public void SetSize (CardSize _size) {
 		size = _size;
 	}
-	public void SetOrder (int order) {
+	public UICard SetOrder (int order) {
 		Vector2 newPos = defaultCardPos_small;
 		newPos.x += (float)order * cardSpace;
 		cardTransform.anchoredPosition = newPos;
+		return this;
 	}
 	void SetPosition (float width, float height) {
 		SetPosition (new Vector2 (width, height));

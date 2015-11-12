@@ -53,6 +53,7 @@ public class UISet : MonoBehaviour {
 	public static Text txt_status;
 	public static Text txt_timernotice;
 	public static Text txt_cardnotice;
+	public static Scrollbar scroll_cardset;
 	public static GameObject Caution;			// Caution
 	public static Text txt_caution;
 	public static GameObject Loading;			// Loading

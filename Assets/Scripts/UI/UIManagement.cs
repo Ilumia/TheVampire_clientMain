@@ -24,14 +24,16 @@ public class UIManagement : MonoBehaviour {
 	public static string debug;
 
 	void Start () {
-		UICard newCard = new UICard(CardGenerator.GetCard(CardType.BATTLE));
-		newCard.SetOrder(0);
-		new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (1);
-		new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (2);
-		new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (3);
-		new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (4);
-		new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (5);
-		new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (6);
+		UICard newCard = new UICard(CardGenerator.GetCard(CardType.BATTLE)).SetOrder (0);
+		UICard.cards.Add (newCard);
+		UICard c1 = new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (1);
+		UICard.cards.Add (c1);
+		UICard c2 = new UICard (CardGenerator.GetCard (CardType.INFO)).SetOrder (2);
+		UICard.cards.Add (c2);
+		UICard c3 = new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (3);
+		UICard.cards.Add (c3);
+		UICard c4 = new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (4);
+		UICard.cards.Add (c4);
 	}
 
 	void Awake () {
@@ -105,6 +107,7 @@ public class UIManagement : MonoBehaviour {
 		UISet.txt_status = GameObject.Find ("txt_status").GetComponent<Text> ();
 		UISet.txt_timernotice = GameObject.Find ("txt_timernotice").GetComponent<Text> ();
 		UISet.txt_cardnotice = GameObject.Find ("txt_cardnotice").GetComponent<Text> ();
+		UISet.scroll_cardset = GameObject.Find ("scroll_cardset").GetComponent<Scrollbar> ();
 		// *Caution
 		UISet.Caution = GameObject.Find("Caution");
 		UISet.txt_caution = GameObject.Find("txt_caution").GetComponent<Text>();
@@ -160,6 +163,7 @@ public class UIManagement : MonoBehaviour {
 			UIRoomUpdateProcessing ();
 			UIStatusProcessing();
 			UILoadingProcessing ();
+			UICardSetProcessing();
 			
 			//for debugging
 			UIDebuggingProcessing ();
@@ -311,6 +315,15 @@ public class UIManagement : MonoBehaviour {
 		frameCounter = 0;
 		if (UISet.Loading.activeInHierarchy) {
 			UISet.img_loadcircle.transform.Rotate(Vector3.back, 30.0f);
+		}
+	}
+	void UICardSetProcessing() {
+		float count = UICard.cards.Count;
+		if(count > 4) { count -= 3; }
+		float value = count / 71.006433f;
+		if (UISet.scroll_cardset.value > value) {
+			UISet.scroll_cardset.value = value;
+			Debug.Log (UISet.scroll_cardset.value + " : " + value);
 		}
 	}
 	
