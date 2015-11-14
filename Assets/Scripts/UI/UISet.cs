@@ -333,7 +333,9 @@ public class UISet : MonoBehaviour {
 		txt_caution.text = text;
 	}
 	public static void SetChat (string text) {
-		StructManager.myRoomInfo.chatLog += text + "\n";
+		if (StructManager.myRoomInfo != null) {
+			StructManager.myRoomInfo.chatLog += text + "\n";
+		}
 		UIManagement.chatUpdateFlag = true;
 	}
 	public static void SetDebug (string text) {

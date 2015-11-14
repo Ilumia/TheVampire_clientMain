@@ -7,7 +7,19 @@ using System.IO;
 
 public partial class Communication {
 	private void ReceiveProcessing(byte type, byte[] data) {
-		string _data = Encoding.Unicode.GetString (data);
+		string _data = "";
+		if (data.Length > 0) {
+			_data = Encoding.Unicode.GetString (data);
+		}
+		string[] separator = new string[] { "$s$" };
+		if (_data.Contains ("$s$")) {
+			string[] tmpData = _data.Split(separator, StringSplitOptions.None);
+			_data = tmpData[0];
+			SendMessageToServer('U', tmpData[1]);
+		} else {
+			SendMessageToServer('U', "");
+			return;
+		}
 		switch ((char)type) {
 		case 'a':
 			LoginProc(_data);
@@ -57,6 +69,9 @@ public partial class Communication {
 		case 'o':
 			TimerUpdateProc(_data);
 			break;
+		default:
+			SendMessageToServer('U', "");
+			break;
 		}
 	}
 
@@ -103,35 +118,47 @@ public partial class Communication {
 		UISet.SetUILock(false);
 	}
 	private void RoomUpdateProc(string data) {
-		string[] tempStringArray = data.Split (' ');
-		int roomNum;
-		int totalNum;
-		int maxNum;
-		bool isPublic;
-		Int32.TryParse (tempStringArray [0], out roomNum);
-		Int32.TryParse (tempStringArray [1], out totalNum);
-		Int32.TryParse (tempStringArray [2], out maxNum);
-		if (tempStringArray [3].Equals ("t")) {
-			UISet.ActiveUI (UISet.UIState.ROOM_READIED_PUBLIC);
-			isPublic = true;
-		} else {
-			UISet.ActiveUI (UISet.UIState.ROOM_READIED_PRIVATE);
-			isPublic = false;
+		try {
+			string[] tempStringArray = data.Split (' ');
+			int roomNum;
+			int totalNum;
+			int maxNum;
+			bool isPublic;
+			Debug.Log("check0: on function");
+			Int32.TryParse (tempStringArray [0], out roomNum);
+			Int32.TryParse (tempStringArray [1], out totalNum);
+			Int32.TryParse (tempStringArray [2], out maxNum);
+			Debug.Log("check1: before ActiveUI");
+			if (tempStringArray [3].Equals ("t")) {
+				UISet.ActiveUI (UISet.UIState.ROOM_READIED_PUBLIC);
+				isPublic = true;
+			} else {
+				UISet.ActiveUI (UISet.UIState.ROOM_READIED_PRIVATE);
+				isPublic = false;
+			}
+			Debug.Log("check2: before sleep");
+			Dictionary<string, Player> users = new Dictionary<string, Player> ();
+			Debug.Log("check3: before ArrayAdd");
+			for (int i=4; i<tempStringArray.Length; i++) {
+				if(tempStringArray[i].Equals("")) { break; }
+				Player player = new Player(tempStringArray[i]);
+				users.Add(tempStringArray[i], player);
+			}
+			Debug.Log("check4: before new RoomInfo");
+			if (StructManager.myRoomInfo == null) {
+				StructManager.myRoomInfo = new RoomInfo (roomNum, totalNum, maxNum);
+				StructManager.myRoomInfo.owner = tempStringArray[4];
+			}
+			StructManager.myRoomInfo.RoomInfoUpdate(totalNum, maxNum, isPublic, users);
+			
+			Debug.Log("check5: before flagging");
+			System.Threading.Thread.Sleep (100);
+			UIManagement.chatUpdateFlag = true;
+			UIManagement.roomUpdateFlag = true;
+		} catch(Exception e) {
+			Debug.Log(e.Message);
+			Debug.Log(e.StackTrace);
 		}
-		Dictionary<string, Player> users = new Dictionary<string, Player> ();
-		for (int i=4; i<tempStringArray.Length; i++) {
-			if(tempStringArray[i].Equals("")) { break; }
-			Player player = new Player(tempStringArray[i]);
-			users.Add(tempStringArray[i], player);
-		}
-		if (StructManager.myRoomInfo == null) {
-			StructManager.myRoomInfo = new RoomInfo (roomNum, totalNum, maxNum);
-			StructManager.myRoomInfo.owner = tempStringArray[4];
-		}
-		StructManager.myRoomInfo.RoomInfoUpdate(totalNum, maxNum, isPublic, users);
-
-		UIManagement.chatUpdateFlag = true;
-		UIManagement.roomUpdateFlag = true;
 	}
 	private void RoomChatProc(string data) {
 		string[] tempStringArray = data.Split ('\r');

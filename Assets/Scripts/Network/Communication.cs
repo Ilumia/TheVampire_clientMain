@@ -33,7 +33,7 @@ public partial class Communication {
 
 	public void SendMessageToServer(char type, String data) {
 		Message message = new Message();
-		Debug.Log ("Send type: " + type + ", data: " + data);
+		//Debug.Log ("Send type: " + type + ", data: " + data);
 		if (m_Client != null) {
 			if (!m_Client.Connected) {
 				DisconnectProcessing ();
@@ -80,8 +80,7 @@ public partial class Communication {
 		Socket _client = (Socket)sender;
 		Message message = (Message)e.UserToken;
 		_client.Send(message.DataBuffer);
-		Console.WriteLine("Send Type: {0}", (char)message.Type);
-		Console.WriteLine("Send Data: {0}", Encoding.Unicode.GetString(message.Data));
+		Console.WriteLine("Send Type: {0}, Data: {1}", (char)message.Type, Encoding.Unicode.GetString(message.Data));
 	}
 	private void Receive_Completed(object sender, SocketAsyncEventArgs e)
 	{
@@ -92,16 +91,20 @@ public partial class Communication {
 		if (_client.Connected)
 		{
 			_client.Receive(message.DataBuffer, message.Length, SocketFlags.None);
-			Debug.Log("Recv Type: " + (char)message.Type + ", Data: " + Encoding.Unicode.GetString(message.Data));
+			if(message.Data.Length > 0) {
+				Debug.Log("Recv Type: " + (char)message.Type + ", Data: " + Encoding.Unicode.GetString(message.Data));
+			}
 			_client.ReceiveAsync(e);
 
 			try {
 				byte[] _data = Compression.DecompressToBytes(message.Data);
 				ReceiveProcessing(message.Type, _data);
-				UISet.SetDebug("RecvType: " + (char)message.Type + "\nRecvData: " + Encoding.Unicode.GetString (message.Data));
+				//UISet.SetDebug("RecvType: " + (char)message.Type + "\nRecvData: " + Encoding.Unicode.GetString (message.Data));
 			} catch(Exception _e) { 
-				Console.WriteLine(_e.Message);
-				Console.WriteLine(_e.StackTrace);
+				Debug.Log(_e.Message);
+				Debug.Log(_e.StackTrace);
+				//Console.WriteLine(_e.Message);
+				//Console.WriteLine(_e.StackTrace);
 			}
 		}
 		else

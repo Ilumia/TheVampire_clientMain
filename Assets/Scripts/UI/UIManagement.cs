@@ -281,7 +281,7 @@ public class UIManagement : MonoBehaviour {
 		roomInfo += StructManager.myRoomInfo.totalNumber.ToString () + " / ";
 		roomInfo += StructManager.myRoomInfo.maximumNumber.ToString () + "\n";
 		UISet.txt_roominfo.text = roomInfo;
-		
+
 		if(StructManager.myRoomInfo.users.Count == 4) {
 			UISet.SetChat ("10초 후 자동으로 게임이 시작됩니다.");
 		}
