@@ -50,6 +50,7 @@ public class UICard {
 			return;
 		}
 		UISet.SetActiveBigCard (true, this);
+		SoundManager.PlayEffectCardSelect ();
 	}
 	public void CardDestroy () {
 		//UICard.cards.Remove(this);

@@ -75,24 +75,30 @@ public class UISet : MonoBehaviour {
 	public static void Ebtn_startgame() {
 		if (uiLock) { return; }
 		ActiveUI (UIState.MAIN_SELECT);
+		SoundManager.PlayEffectButtonClick ();
 	}
 	public static void Ebtn_setting() {
 		if (uiLock) { return; }
+		SoundManager.PlayEffectButtonClick ();
 
 	}
 	public static void Ebtn_staff() {
 		if (uiLock) { return; }
-
+		
+		SoundManager.PlayEffectButtonClick ();
 	}
 	public static void Ebtn_exit() {
+		SoundManager.PlayEffectButtonClick ();
 		Application.Quit ();
 	}
 	// SelectMode
 	public static void Ebtn_solo() {
 		if (uiLock) { return; }
+		SoundManager.PlayEffectButtonClick ();
 	}
 	public static void Ebtn_multi() {
 		if (uiLock) { return; }
+		SoundManager.PlayEffectButtonClick ();
 		ActiveUI (UIState.MAIN_LOGIN);
 	}
 	// Login
@@ -118,12 +124,14 @@ public class UISet : MonoBehaviour {
 		string email = input_email.text;
 		string password = input_password.text;
 		comm.SendMessageToServer ('I', email + " " + password);
+		SoundManager.PlayEffectButtonClick ();
 		UISet.SetUILock(true);
 	}
 	public static void Ebtn_cancel() {
 		if (uiLock) { return; }
 		input_email.text = "";
 		input_password.text = "";
+		SoundManager.PlayEffectButtonClick ();
 		ActiveUI (UIState.MAIN);
 	}
 	public static void Ebtn_login() {
@@ -143,30 +151,36 @@ public class UISet : MonoBehaviour {
 		} 
 
 		comm.SendMessageToServer ('A', email + " " + password);
+		SoundManager.PlayEffectButtonClick ();
 		UISet.SetUILock(true);
 	}
 	// Lobby
 	public static void Ebtn_roomenter() {
 		if (uiLock) { return; }
 		comm.SendMessageToServer ('F', "");
+		SoundManager.PlayEffectButtonClick ();
 		UISet.SetUILock(true);
 	}
 	public static void Ebtn_createroom() {
 		if (uiLock) { return; }
 		comm.SendMessageToServer ('C', "t");
+		SoundManager.PlayEffectButtonClick ();
 		UISet.SetUILock(true);
 	}
 	public static void Ebtn_createprivateroom() {
 		if (uiLock) { return; }
 		comm.SendMessageToServer ('C', "f");
+		SoundManager.PlayEffectButtonClick ();
 		UISet.SetUILock(true);
 	}
 	public static void Ebtn_friends() {
 		if (uiLock) { return; }
-		 
+		
+		SoundManager.PlayEffectButtonClick ();
 	}
 	public static void Ebtn_lobbyexit() {
 		if (uiLock) { return; }
+		SoundManager.PlayEffectButtonClick ();
 		ActiveUI (UIState.MAIN_LOGIN);
 	}
 	// ReadiedRoom
@@ -187,6 +201,7 @@ public class UISet : MonoBehaviour {
 			UICard.cards[selectedCard.index].CardDestroy();
 			selectedCard.CardDestroy();
 			selectedCard = null;
+			SoundManager.PlayEffectCardSelect ();
 			SetActiveBigCard(false, null);
 		}
 	}
@@ -195,14 +210,17 @@ public class UISet : MonoBehaviour {
 		if(input_chat.text == null || input_chat.text.Equals("")) { return; }
 		comm.SendMessageToServer ('G', input_chat.text);
 		input_chat.text = "";
+		SoundManager.PlayEffectButtonClick ();
 	}
 	public static void Ebtn_roominvite() {
 		
+		SoundManager.PlayEffectButtonClick ();
 	}
 	public static void Ebtn_roomexit() {
 		comm.SendMessageToServer ('H', StructManager.myRoomInfo.roomNumber.ToString());
 		UISet.ActiveUI (UISet.UIState.LOBBY_LOBBY);
 		SetRoomDefault ();
+		SoundManager.PlayEffectButtonClick ();
 	}
 	// StartedRoom
 	public static void Ebtn_getinfocard() {
@@ -215,6 +233,7 @@ public class UISet : MonoBehaviour {
 			UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.INFO)).SetOrder (0));
 		}
 		SetUILock (false);
+		SoundManager.PlayEffectCardSelect ();
 		UIManagement.cardUpdateFlag = true;
 		UIManagement.cardNotice = UICard.gettedCard.ToString ();
 	}
@@ -228,6 +247,7 @@ public class UISet : MonoBehaviour {
 			UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (0));
 		}
 		SetUILock (false);
+		SoundManager.PlayEffectCardSelect ();
 		UIManagement.cardUpdateFlag = true;
 		UIManagement.cardNotice = UICard.gettedCard.ToString ();
 	}
@@ -247,10 +267,12 @@ public class UISet : MonoBehaviour {
 			UICard.gettedCard += 2;
 			SetChat("<SYSTEM> [행동 재개]의 효과로 두 개의 카드를 더 뽑을 수 있습니다.");
 		}
+		SoundManager.PlayEffectCardSelect ();
 		SetActiveBigCard(false, null);
 		UIManagement.cardUpdateFlag = true;
 	}
 	public static void Ebtn_cardcancel() {
+		SoundManager.PlayEffectCardSelect ();
 		SetActiveBigCard (false, null);
 		selectedCard = null;
 	}
