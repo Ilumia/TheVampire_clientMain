@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System.Collections.Generic;
 
 public class UISet : MonoBehaviour {
 	public static bool uiLock;
@@ -9,6 +10,7 @@ public class UISet : MonoBehaviour {
 	public enum UIState { MAIN, MAIN_SELECT, MAIN_LOGIN, 
 		LOBBY_LOBBY, ROOM_READIED_PUBLIC, ROOM_READIED_PRIVATE, ROOM_STARTED, CAUTION};
 	public static UIState uiState;
+	static UICard selectedCard;
 
 	public static bool autoLoginFlag;
 
@@ -39,6 +41,8 @@ public class UISet : MonoBehaviour {
 	public static GameObject Room;				// Room
 	public static GameObject Set_Room;			// Room Set
 	public static Button[] Players;
+	//public static Image[] PlayerHP;
+	public static Dictionary<string, Image> playerHP;
 	public static Image img_profile;
 	public static Text txt_chatlog;
 	public static Scrollbar scroll_chat;
@@ -56,6 +60,12 @@ public class UISet : MonoBehaviour {
 	public static Scrollbar scroll_cardset;
 	public static Button btn_getinfocard;
 	public static Button btn_getbattlecard;
+	public static GameObject Set_BigCardPanel;	// BigCard Set in StartedRoom Set
+	public static Text txt_bigcarddescription;
+	public static Image img_bigcardimage;
+	public static Text txt_bigcardname;
+	public static Button btn_carduse;
+	public static Button btn_cardcancel;
 	public static GameObject Caution;			// Caution
 	public static Text txt_caution;
 	public static GameObject Loading;			// Loading
@@ -162,24 +172,19 @@ public class UISet : MonoBehaviour {
 	// ReadiedRoom
 	public static void EPlayers(string _player) {
 		if (uiLock) { return; }
-		if (UICard.selectedCard == -1) { Debug.Log ("notSelected!"); return; }
+		if (selectedCard == null) { return; }
 
-		bool isNeedTarget = (UICard.selectedCard == 30 || UICard.selectedCard == 34 || 
-		                     UICard.selectedCard == 37 || UICard.selectedCard == 60 ||
-		                     UICard.selectedCard == 61 || UICard.selectedCard == 69);
-
-		if (isNeedTarget) {
-			if (_player.Equals (StructManager.user.id)) {
-				SetChat("<SYSTEM> 현재 선택된 카드(" + CardGenerator.GetCardNameFromNum(UICard.selectedCard) + 
-				        ")는 자기자신에게 사용할 수 없습니다.");
-				return;
-			} else {
-				string msg = UICard.selectedCard + " " + _player;
-				comm.SendMessageToServer('N', msg);
-				UICard.cards[UICard.selectedCardNum].CardDestroy();
-				UICard.selectedCard = -1;
-				UICard.selectedCardNum = -1;
-			}
+		if (_player.Equals (StructManager.user.id)) {
+			SetChat("<SYSTEM> 현재 선택된 카드(" + selectedCard.nameString + 
+			        ")는 자기자신에게 사용할 수 없습니다.");
+			return;
+		} else {
+			string msg = selectedCard.id + " " + _player;
+			comm.SendMessageToServer('M', msg);
+			UICard.cards[selectedCard.index].CardDestroy();
+			selectedCard.CardDestroy();
+			selectedCard = null;
+			SetActiveBigCard(false, null);
 		}
 	}
 	public static void Ebtn_chatenter() {
@@ -194,6 +199,10 @@ public class UISet : MonoBehaviour {
 	public static void Ebtn_roomexit() {
 		comm.SendMessageToServer ('H', StructManager.myRoomInfo.roomNumber.ToString());
 		StructManager.myRoomInfo = null;
+		for (int i=0; i<4; i++) {
+			Players [i].GetComponentInChildren<Text> ().text = "";
+		}
+		UISet.img_profile.sprite = Resources.Load<Sprite> ("UI/alpha");
 		UISet.ActiveUI (UISet.UIState.LOBBY_LOBBY);
 	}
 	// StartedRoom
@@ -217,6 +226,21 @@ public class UISet : MonoBehaviour {
 		UIManagement.cardUpdateFlag = true;
 		UIManagement.cardNotice = UICard.gettedCard.ToString ();
 	}
+	public static void Ebtn_carduse() {
+		int id = selectedCard.id;
+		bool isTargeting = (id == 30 || id == 34 || id == 37 || id == 60 || id == 61 || id == 69);
+		if (!isTargeting) {
+			Communication.Instance().SendMessageToServer('M', selectedCard.id.ToString());
+			selectedCard.CardDestroy();
+			selectedCard = null;
+		}
+		SetActiveBigCard(false, null);
+		UIManagement.cardUpdateFlag = true;
+	}
+	public static void Ebtn_cardcancel() {
+		SetActiveBigCard (false, null);
+		selectedCard = null;
+	}
 
 	public static void SetUILock(bool check) {
 		UIManagement.UILockList.Add (check);
@@ -229,6 +253,22 @@ public class UISet : MonoBehaviour {
 			Loading.SetActive (false);
 		}
 	}
+	public static void SetActiveBigCard(bool check, UICard uiCard) {
+		if (uiCard == null) {
+			Set_BigCardPanel.SetActive (false);
+			return;
+		}
+		if (check) {
+			selectedCard = uiCard;
+			Set_BigCardPanel.SetActive (true);
+			txt_bigcarddescription.text = selectedCard.description;
+			txt_bigcardname.text = selectedCard.nameString;
+			img_bigcardimage.sprite = selectedCard.img;
+		} else {
+			Set_BigCardPanel.SetActive (false);
+			return;
+		}
+	}
 	public static void InactiveUI() {
 		Main.SetActive (false);
 		Set_Main.SetActive (false);
@@ -237,8 +277,9 @@ public class UISet : MonoBehaviour {
 		Lobby.SetActive (false);
 		Set_Lobby.SetActive (false);
 		Room.SetActive (false);
-		Set_StartedRoom.SetActive (false);
 		Set_ReadiedRoom.SetActive (false);
+		Set_StartedRoom.SetActive (false);
+		Set_BigCardPanel.SetActive (false);
 		Caution.SetActive (false);
 		Loading.SetActive (false);
 	}
@@ -299,6 +340,7 @@ public class UISet : MonoBehaviour {
 		case UIState.ROOM_STARTED:
 			Room.SetActive(true);
 			Set_StartedRoom.SetActive(true);
+			uiState = UIState.ROOM_STARTED;
 			break;
 		case UIState.CAUTION:
 			if(uiState == UIState.MAIN_SELECT) {

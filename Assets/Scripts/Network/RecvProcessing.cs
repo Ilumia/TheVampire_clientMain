@@ -7,71 +7,76 @@ using System.IO;
 
 public partial class Communication {
 	private void ReceiveProcessing(byte type, byte[] data) {
-		string _data = "";
-		if (data.Length > 0) {
-			_data = Encoding.Unicode.GetString (data);
-		}
-		string[] separator = new string[] { "$s$" };
-		if (_data.Contains ("$s$")) {
-			string[] tmpData = _data.Split(separator, StringSplitOptions.None);
-			_data = tmpData[0];
-			SendMessageToServer('U', tmpData[1]);
-		} else {
-			SendMessageToServer('U', "");
-			return;
-		}
-		switch ((char)type) {
-		case 'a':
-			LoginProc(_data);
-			break;
-		case 'b':
-			//미사용
-			break;
-		case 'c':
-			RoomCreateProc(_data);
-			break;
-		case 'd':
-			FailToRoomEnter();
-			break;
-		case 'e':
-			RoomUpdateProc(_data);
-			break;
-		case 'f':
-			RoomChatProc(_data);
-			break;
-		case 'g':
-			SignUpProc(_data);
-			break;
-		case 'h':
-			//show friends
-			break;
-		case 'i':
-			//add friedn
-			break;
-		case 'j':
-			GameStartProc();
-			break;
-		case 'w':
-			ItemListProc(_data);
-			break;
-		case 'k':
-			//RandomNumberProc(_data);
-			break;
-		case 'l':
-			//GameInfoProc(_data);
-			break;
-		case 'm':
-			GameTurnInfoProc(_data);
-			break;
-		case 'n':
-			RoomInOutProc(_data);
-			break;
-		case 'o':
-			TimerUpdateProc(_data);
-			break;
-		default:
-			SendMessageToServer('U', "");
-			break;
+		try{
+			string _data = "";
+			if (data.Length > 0) {
+				_data = Encoding.Unicode.GetString (data);
+			}
+			string[] separator = new string[] { "$s$" };
+			if (_data.Contains ("$s$")) {
+				string[] tmpData = _data.Split(separator, StringSplitOptions.None);
+				_data = tmpData[0];
+				SendMessageToServer('U', tmpData[1]);
+			} else {
+				//SendMessageToServer('U', "");
+				return;
+			}
+			switch ((char)type) {
+			case 'a':
+				LoginProc(_data);
+				break;
+			case 'b':
+				//미사용
+				break;
+			case 'c':
+				RoomCreateProc(_data);
+				break;
+			case 'd':
+				FailToRoomEnter();
+				break;
+			case 'e':
+				RoomUpdateProc(_data);
+				break;
+			case 'f':
+				RoomChatProc(_data);
+				break;
+			case 'g':
+				SignUpProc(_data);
+				break;
+			case 'h':
+				//show friends
+				break;
+			case 'i':
+				//add friedn
+				break;
+			case 'j':
+				GameStartProc(_data);
+				break;
+			case 'w':
+				ItemListProc(_data);
+				break;
+			case 'k':
+				//RandomNumberProc(_data);
+				break;
+			case 'l':
+				GameInfoProc(_data);
+				break;
+			case 'm':
+				GameTurnInfoProc(_data);
+				break;
+			case 'n':
+				RoomInOutProc(_data);
+				break;
+			case 'o':
+				TimerUpdateProc(_data);
+				break;
+			default:
+				//SendMessageToServer('U', "");
+				break;
+			}
+		} catch(Exception e) {
+			Debug.Log (e.Message);
+			Debug.Log (e.StackTrace);
 		}
 	}
 
@@ -99,7 +104,6 @@ public partial class Communication {
 		String[] _data = data.Split (' ');
 		if (_data[0].Equals ("s")) {
 			// 방 생성 성공
-			Debug.Log ("success to create room");
 			StructManager.myRoomInfo = null;
 			if(_data[1].Equals("t")) {
 				UISet.ActiveUI(UISet.UIState.ROOM_READIED_PUBLIC);
@@ -124,11 +128,9 @@ public partial class Communication {
 			int totalNum;
 			int maxNum;
 			bool isPublic;
-			Debug.Log("check0: on function");
 			Int32.TryParse (tempStringArray [0], out roomNum);
 			Int32.TryParse (tempStringArray [1], out totalNum);
 			Int32.TryParse (tempStringArray [2], out maxNum);
-			Debug.Log("check1: before ActiveUI");
 			if (tempStringArray [3].Equals ("t")) {
 				UISet.ActiveUI (UISet.UIState.ROOM_READIED_PUBLIC);
 				isPublic = true;
@@ -136,22 +138,18 @@ public partial class Communication {
 				UISet.ActiveUI (UISet.UIState.ROOM_READIED_PRIVATE);
 				isPublic = false;
 			}
-			Debug.Log("check2: before sleep");
 			Dictionary<string, Player> users = new Dictionary<string, Player> ();
-			Debug.Log("check3: before ArrayAdd");
 			for (int i=4; i<tempStringArray.Length; i++) {
 				if(tempStringArray[i].Equals("")) { break; }
 				Player player = new Player(tempStringArray[i]);
 				users.Add(tempStringArray[i], player);
 			}
-			Debug.Log("check4: before new RoomInfo");
 			if (StructManager.myRoomInfo == null) {
 				StructManager.myRoomInfo = new RoomInfo (roomNum, totalNum, maxNum);
 				StructManager.myRoomInfo.owner = tempStringArray[4];
 			}
 			StructManager.myRoomInfo.RoomInfoUpdate(totalNum, maxNum, isPublic, users);
-			
-			Debug.Log("check5: before flagging");
+
 			System.Threading.Thread.Sleep (100);
 			UIManagement.chatUpdateFlag = true;
 			UIManagement.roomUpdateFlag = true;
@@ -179,31 +177,51 @@ public partial class Communication {
 		}
 		UISet.SetUILock(false);
 	}
-	private void GameStartProc() {
+	private void GameStartProc(string data) {
+		if (data.Equals ("v")) {
+			StructManager.user.isVampire = true;
+			UISet.SetChat("<SYSTEM> 게임이 시작되었습니다.\n<SYSTEM> 당신은 뱀파이어입니다.");
+		} else if (data.Equals ("h")){
+			StructManager.user.isVampire = false;
+			UISet.SetChat("<SYSTEM> 게임이 시작되었습니다.\n<SYSTEM> 당신은 헌터입니다.");
+		}
 		StructManager.myRoomInfo.roomState = 1;
 		UISet.ActiveUI (UISet.UIState.ROOM_STARTED);
 		UICard.gettedCard = 3;
+		UIManagement.hpUpdateFlag = true;
+		UIManagement.profileUpdateFlag = true;
 	}
 	private void GameInfoProc(string data) {
-		UISet.SetChat ("<SYSTEM> " + data);
+		try{
+			UISet.SetChat ("<SYSTEM> " + data);
+		} catch(Exception e) {
+			Debug.Log(e.Message);
+			Debug.Log(e.StackTrace);
+		}
 	}
 	private void GameTurnInfoProc(string data) {
-		string status = "";
-		string[] tmp = data.Split (' ');
-		int newRoomState = Int32.Parse (tmp [0]);
-		StructManager.myRoomInfo.roomState = newRoomState;
-		for (int i = 1; i < 8; i+=2) {
-			int hp = Int32.Parse (tmp[i+1]);
-			StructManager.myRoomInfo.users[tmp[i]].hp = hp;
-			if(tmp[i].Equals(StructManager.user.id)) {
-				status = "제 " + newRoomState + " 턴" + "\n\nHP: " + hp + " / 100";
-				UIManagement.status = status;
+		try {
+			string status = "";
+			string[] tmp = data.Split (' ');
+			int newRoomState = Int32.Parse (tmp [0]);
+			StructManager.myRoomInfo.roomState = newRoomState;
+			for (int i = 1; i < 8; i+=2) {
+				int hp = Int32.Parse (tmp[i+1]);
+				StructManager.myRoomInfo.users[tmp[i]].hp = hp;
+				if(tmp[i].Equals(StructManager.user.id)) {
+					status = "제 " + newRoomState + " 턴" + "\nHP: " + hp + " / 100";
+					UIManagement.status = status;
+				}
 			}
+			UISet.SetChat ("<SYSTEM> " + newRoomState + " 턴 입니다.");
+			UIManagement.hpUpdateFlag = true;
+			UIManagement.timerNotice = "15";
+			UICard.gettedCard++;
+			UIManagement.cardNotice = UICard.gettedCard.ToString ();
+		} catch(Exception e) {
+			Debug.Log(e.Message);
+			Debug.Log(e.StackTrace);
 		}
-		UIManagement.hpUpdateFlag = true;
-		UIManagement.timerNotice = "15";
-		UICard.gettedCard++;
-		UIManagement.cardNotice = UICard.gettedCard.ToString ();
 	}
 	private void RoomInOutProc(string data) {
 		string[] tmp = data.Split (' ');

@@ -52,6 +52,7 @@ public class Player {
 public class UserInfo {
 	public string id;
 	public Item item;
+	public bool isVampire;
 	public UserInfo (string _id) {
 		id = _id;
 		item = new Item ();

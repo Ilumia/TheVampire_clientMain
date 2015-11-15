@@ -5,13 +5,10 @@ using System.Collections.Generic;
 
 public class UICard {
 	public enum CardSize { SMALL, BIG }
-	enum CardType { ABILITY, INFO, BATTLE }
 
 	static RectTransform cardSetTransform = GameObject.Find ("CardSet").GetComponent<RectTransform>();
-	static public int selectedCardNum = -1;
-	static public int selectedCard = -1;
-	static public int gettedCard = 3;
 	static public List<UICard> cards = new List<UICard> ();
+	static public int gettedCard = 3;
 
 	static Vector2 defaultCardPos_small = new Vector2 (-4966.9f, 0);
 	static float cardSpace = 139.9f;
@@ -28,12 +25,14 @@ public class UICard {
 
 	GameObject card;
 	RectTransform cardTransform;
-	public int number;
+	public int index;
 	public int id;
+	public string nameString;
+	public string description;
+	public Sprite img;
 	int serial;
 	static int nextSerial = 0;
 	CardSize size = CardSize.SMALL;
-	CardType type;
 	Text name;
 	Image image;
 	Button button;
@@ -47,24 +46,7 @@ public class UICard {
 		SetCard (cardID);
 	}
 	void OnClick() {
-		if (size == CardSize.SMALL) {
-
-		} else {
-
-		}
-		if (id == 30 || id == 34 || id == 37 || id == 60 || id == 61 || id == 69) {
-			if (selectedCard == id) {
-				selectedCard = -1;
-				selectedCardNum = -1;
-				return;
-			}
-			selectedCard = id;
-			selectedCardNum = 0;
-		} else {
-			Communication.Instance().SendMessageToServer('M', id.ToString());
-			CardDestroy();
-		}
-		UIManagement.cardUpdateFlag = true;
+		UISet.SetActiveBigCard (true, this);
 	}
 	public void CardDestroy () {
 		//UICard.cards.Remove(this);
@@ -74,14 +56,13 @@ public class UICard {
 				//UICard.cards.Remove(this);
 			}
 		}
-		foreach (UICard _card in UICard.cards) {
-		}
 		List<GameObject> children = new List<GameObject>();
 		foreach (Transform child in card.transform) children.Add(child.gameObject);
 		foreach (GameObject child in children) {
 			Object.Destroy(child);
 		}
 		Object.Destroy (card);
+		UIManagement.cardUpdateFlag = true;
 	}
 	public void SetSize (CardSize _size) {
 		size = _size;
@@ -103,27 +84,43 @@ public class UICard {
 		id = cardID;
 		serial = nextSerial;
 		nextSerial++;
-		string cardName = "";
 		string cardImage = "";
+		string[] splitStr = new string[] { "\\" + "n" };
 		if (cardID < 30) {
 			Ability newCard = StructManager.itemSet.abilitySet [cardID];
-			cardName = newCard.abilityName;
-			type = CardType.ABILITY;
+			nameString = newCard.abilityName;
+			string[] tmpDescription = newCard.description.Split(splitStr, System.StringSplitOptions.None);
+			description = "";
+			foreach(string str in tmpDescription) {
+				description += str + "\n";
+			}
+			foreach(char t in newCard.description) {
+				Debug.Log (t);
+			}
 		} else if (cardID < 60) {
 			InfoCard newCard = StructManager.itemSet.infoCardSet [cardID];
-			cardName = newCard.cardName;
-			type = CardType.INFO;
+			nameString = newCard.cardName;
+			string[] tmpDescription = newCard.description.Split(splitStr, System.StringSplitOptions.None);
+			description = "";
+			foreach(string str in tmpDescription) {
+				description += str + "\n";
+			}
 		}else {
 			BattleCard newCard = StructManager.itemSet.battleCardSet [cardID];
-			cardName = newCard.cardName;
-			type = CardType.BATTLE;
+			nameString = newCard.cardName;
+			string[] tmpDescription = newCard.description.Split(splitStr, System.StringSplitOptions.None);
+			description = "";
+			foreach(string str in tmpDescription) {
+				description += str + "\n";
+			}
 		}
 		cardImage = cardID.ToString ();
 		if (cardID < 10) {
 			cardImage = "0" + cardImage;
 		}
-		name.text = cardName;
-		image.sprite = Resources.Load<Sprite>("CardSet/" + cardImage);
+		name.text = nameString;
+		img = Resources.Load<Sprite>("CardSet/" + cardImage);
+		image.sprite = img;
 		button.onClick.AddListener (OnClick);
 	}
 	void InitCard() {

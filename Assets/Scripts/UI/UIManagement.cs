@@ -16,6 +16,7 @@ public class UIManagement : MonoBehaviour {
 	public static bool roomUpdateFlag;
 	public static string status;
 	public static bool hpUpdateFlag;
+	public static bool profileUpdateFlag;
 	public static string timerNotice;
 	public static string cardNotice;
 	private int frameCounter;
@@ -29,12 +30,7 @@ public class UIManagement : MonoBehaviour {
 		UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (1));
 		UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (2));
 		UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (3));
-		UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (4));
-		UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (5));
-		UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (6));
-		UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (7));
-		UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (8));
-		UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (9));
+		//UISet.SetActiveBigCard (true, UICard.cards [0]);
 	}
 
 	void Awake () {
@@ -89,9 +85,11 @@ public class UIManagement : MonoBehaviour {
 		UISet.btn_lobbyexit = GameObject.Find("btn_lobbyexit").GetComponent<Button>();
 		// *Room
 		UISet.Room = GameObject.Find ("Room");
+		UISet.playerHP = new Dictionary<string, Image> ();
 		UISet.Players = new Button[4];
 		for (int i=0; i<UISet.Players.Length; i++) {
 			UISet.Players[i] = GameObject.Find("Player (" + i + ")").GetComponent<Button>();
+			Image[] tmpImages = UISet.Players[i].GetComponentsInChildren<Image>();
 		}
 		UISet.img_profile = GameObject.Find ("img_profile").GetComponent<Image> ();
 		UISet.txt_chatlog = GameObject.Find ("txt_chatlog").GetComponent<Text> ();
@@ -112,6 +110,13 @@ public class UIManagement : MonoBehaviour {
 		UISet.scroll_cardset = GameObject.Find ("scroll_cardset").GetComponent<Scrollbar> ();
 		UISet.btn_getinfocard = GameObject.Find ("btn_getinfocard").GetComponent<Button> ();
 		UISet.btn_getbattlecard = GameObject.Find ("btn_getbattlecard").GetComponent<Button> ();
+		// BigCardPanel in StartedRoom
+		UISet.Set_BigCardPanel = GameObject.Find ("Set_BigCardPanel");
+		UISet.txt_bigcardname = GameObject.Find ("txt_bigcardname").GetComponent<Text> ();
+		UISet.img_bigcardimage = GameObject.Find ("img_bigcardimage").GetComponent<Image> ();
+		UISet.txt_bigcarddescription = GameObject.Find ("txt_bigcarddescription").GetComponent<Text> ();
+		UISet.btn_carduse = GameObject.Find ("btn_carduse").GetComponent<Button> ();
+		UISet.btn_cardcancel = GameObject.Find ("btn_cardcancel").GetComponent<Button> ();
 		// *Caution
 		UISet.Caution = GameObject.Find("Caution");
 		UISet.txt_caution = GameObject.Find("txt_caution").GetComponent<Text>();
@@ -153,6 +158,8 @@ public class UIManagement : MonoBehaviour {
 		UISet.btn_roomexit.onClick.AddListener (UISet.Ebtn_roomexit);
 		UISet.btn_getinfocard.onClick.AddListener (UISet.Ebtn_getinfocard);
 		UISet.btn_getbattlecard.onClick.AddListener (UISet.Ebtn_getbattlecard);
+		UISet.btn_carduse.onClick.AddListener (UISet.Ebtn_carduse);
+		UISet.btn_cardcancel.onClick.AddListener (UISet.Ebtn_cardcancel);
 
 		UISet.ActiveUI (UISet.UIState.MAIN);
 		UISet.autoLoginFlag = true;
@@ -235,7 +242,8 @@ public class UIManagement : MonoBehaviour {
 					UISet.Ebtn_login ();
 				}
 			} else if (UISet.uiState == UISet.UIState.ROOM_READIED_PUBLIC || 
-			           UISet.uiState == UISet.UIState.ROOM_READIED_PRIVATE) {
+			           UISet.uiState == UISet.UIState.ROOM_READIED_PRIVATE ||
+			           UISet.uiState == UISet.UIState.ROOM_STARTED) {
 				if (eventSystem.currentSelectedGameObject == null) { 
 					UISet.input_chat.Select();
 				} else if (eventSystem.currentSelectedGameObject.name.Equals (UISet.input_chat.name)) {
@@ -258,6 +266,7 @@ public class UIManagement : MonoBehaviour {
 	}
 	void UIRoomUpdateProcessing() {
 		if (!roomUpdateFlag) { return; }
+		if (StructManager.myRoomInfo == null) { return; }
 		roomUpdateFlag = false;
 
 		UISet.SetUILock(false);
@@ -286,10 +295,22 @@ public class UIManagement : MonoBehaviour {
 			UISet.SetChat ("10초 후 자동으로 게임이 시작됩니다.");
 		}
 
+		UISet.playerHP = new Dictionary<string, Image> ();
 		int x = 0;
 		foreach (Player player in StructManager.myRoomInfo.users.Values) {
 			UISet.Players[x].GetComponentInChildren<Text>().text = player.id;
+			Image[] tmpImages = UISet.Players[x].GetComponentsInChildren<Image>();
+			foreach(Image img in tmpImages) {
+				if(img.name.Contains("hp")){
+					UISet.playerHP.Add(player.id, img);
+				}
+			}
 			x++;
+		}
+		for (int i=0; i<4; i++) {
+			if(i >= StructManager.myRoomInfo.users.Count) {
+				UISet.Players[x].GetComponentInChildren<Text>().text = "";
+			}
 		}
 		foreach (Button player in UISet.Players) {
 			string _playerID = player.GetComponentInChildren<Text>().text;
@@ -303,7 +324,30 @@ public class UIManagement : MonoBehaviour {
 			status = "";
 		}
 		if (hpUpdateFlag) {
-			hpUpdateFlag = false;
+			if(StructManager.myRoomInfo != null) { 
+				hpUpdateFlag = false;
+				foreach(Player _player in StructManager.myRoomInfo.users.Values) {
+					Texture2D texture = new Texture2D(100, 1);
+					for(int i=0; i<100; i++) {
+						if(i < _player.hp) {
+							texture.SetPixel(i, 0, new Color(188.8f, 0, 0));
+						} else {
+							texture.SetPixel(i, 0, Color.black);
+						}
+					}
+					texture.Apply();
+					Rect rect = new Rect (0, 0, 100, 1);
+					Sprite sprite = Sprite.Create (texture, rect, new Vector2 (0.5f, 0.5f));
+					UISet.playerHP[_player.id].sprite = sprite;
+				}
+			}
+		}
+		if (profileUpdateFlag) {
+			if(StructManager.user.isVampire) {
+				UISet.img_profile.sprite = Resources.Load<Sprite>("UI/icon_vampire");
+			} else {
+				UISet.img_profile.sprite = Resources.Load<Sprite>("UI/icon_hunter");
+			}
 		}
 		if (!timerNotice.Equals ("")) {
 			UISet.txt_timernotice.text = timerNotice;
@@ -334,11 +378,11 @@ public class UIManagement : MonoBehaviour {
 		float value = count / 68.00643316654753f;
 		if (UISet.scroll_cardset.value > value) {
 			UISet.scroll_cardset.value = value;
-			Debug.Log (UISet.scroll_cardset.value + " : " + value);
 		}
 		if (cardUpdateFlag) {
 			for(int i = 0; i < UICard.cards.Count; i++) {
 				UICard.cards[i].SetOrder(i);
+				UICard.cards[i].index = i;
 			}
 		}
 	}
