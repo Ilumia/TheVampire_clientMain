@@ -52,9 +52,6 @@ public partial class Communication {
 			case 'j':
 				GameStartProc(_data);
 				break;
-			case 'w':
-				ItemListProc(_data);
-				break;
 			case 'k':
 				//RandomNumberProc(_data);
 				break;
@@ -69,6 +66,13 @@ public partial class Communication {
 				break;
 			case 'o':
 				TimerUpdateProc(_data);
+				break;
+			case 'p':
+				GameOverProc(_data);
+				break;
+
+			case 'w':
+				ItemListProc(_data);
 				break;
 			default:
 				//SendMessageToServer('U', "");
@@ -185,6 +189,7 @@ public partial class Communication {
 			StructManager.user.isVampire = false;
 			UISet.SetChat("<SYSTEM> 게임이 시작되었습니다.\n<SYSTEM> 당신은 헌터입니다.");
 		}
+		StructManager.isOver = false;
 		StructManager.myRoomInfo.roomState = 1;
 		UISet.ActiveUI (UISet.UIState.ROOM_STARTED);
 		UICard.gettedCard = 3;
@@ -242,6 +247,17 @@ public partial class Communication {
 		} else if (StructManager.myRoomInfo.roomState > 0) {
 			UIManagement.timerNotice = tmp.ToString();
 		}
+	}
+	private void GameOverProc(string data) {
+		if (data.Equals ("v")) {
+			UISet.SetChat ("<SYSTEM> 뱀파이어 팀이 승리했습니다.");
+		} else if (data.Equals ("h")) {
+			UISet.SetChat ("<SYSTEM> 헌터 팀이 승리했습니다.");
+		} else if (data.Equals ("d")) {
+			UISet.SetChat ("<SYSTEM> 무승부입니다.");
+		}
+		UISet.SetActiveBigCard (false, null);
+		UISet.ActiveUI (UISet.UIState.ROOM_READIED_PUBLIC);
 	}
 	private void ItemListProc(string data) {
 		File.WriteAllText (ItemSetInterpreter.path, data);

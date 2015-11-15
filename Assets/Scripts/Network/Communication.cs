@@ -89,7 +89,7 @@ public partial class Communication {
 
 		if (_client.Connected)
 		{
-			int t = _client.Receive(message.DataBuffer, message.Length, SocketFlags.None);
+			_client.Receive(message.DataBuffer, message.Length, SocketFlags.None);
 			if(message.Data.Length > 0) {
 				Debug.Log("Recv Type: " + (char)message.Type + ", Data: " + Encoding.Unicode.GetString(message.Data));
 			}

@@ -173,6 +173,9 @@ public class UISet : MonoBehaviour {
 	public static void EPlayers(string _player) {
 		if (uiLock) { return; }
 		if (selectedCard == null) { return; }
+		if (StructManager.myRoomInfo.users [StructManager.user.id].hp <= 0) {
+			return;
+		}
 
 		if (_player.Equals (StructManager.user.id)) {
 			SetChat("<SYSTEM> 현재 선택된 카드(" + selectedCard.nameString + 
@@ -198,15 +201,14 @@ public class UISet : MonoBehaviour {
 	}
 	public static void Ebtn_roomexit() {
 		comm.SendMessageToServer ('H', StructManager.myRoomInfo.roomNumber.ToString());
-		StructManager.myRoomInfo = null;
-		for (int i=0; i<4; i++) {
-			Players [i].GetComponentInChildren<Text> ().text = "";
-		}
-		UISet.img_profile.sprite = Resources.Load<Sprite> ("UI/alpha");
 		UISet.ActiveUI (UISet.UIState.LOBBY_LOBBY);
+		SetRoomDefault ();
 	}
 	// StartedRoom
 	public static void Ebtn_getinfocard() {
+		if (StructManager.myRoomInfo.users [StructManager.user.id].hp <= 0) {
+			return;
+		}
 		SetUILock (true);
 		if (UICard.gettedCard > 0) {
 			UICard.gettedCard--;
@@ -217,6 +219,9 @@ public class UISet : MonoBehaviour {
 		UIManagement.cardNotice = UICard.gettedCard.ToString ();
 	}
 	public static void Ebtn_getbattlecard() {
+		if (StructManager.myRoomInfo.users [StructManager.user.id].hp <= 0) {
+			return;
+		}
 		SetUILock (true);
 		if (UICard.gettedCard > 0) {
 			UICard.gettedCard--;
@@ -227,12 +232,20 @@ public class UISet : MonoBehaviour {
 		UIManagement.cardNotice = UICard.gettedCard.ToString ();
 	}
 	public static void Ebtn_carduse() {
+		if (StructManager.myRoomInfo.users [StructManager.user.id].hp <= 0) {
+			SetActiveBigCard(false, null);
+			return;
+		}
 		int id = selectedCard.id;
 		bool isTargeting = (id == 30 || id == 34 || id == 37 || id == 60 || id == 61 || id == 69);
 		if (!isTargeting) {
 			Communication.Instance().SendMessageToServer('M', selectedCard.id.ToString());
 			selectedCard.CardDestroy();
 			selectedCard = null;
+		}
+		if (id == 38 || id == 70) {
+			UICard.gettedCard += 2;
+			SetChat("<SYSTEM> [행동 재개]의 효과로 두 개의 카드를 더 뽑을 수 있습니다.");
 		}
 		SetActiveBigCard(false, null);
 		UIManagement.cardUpdateFlag = true;
@@ -254,6 +267,9 @@ public class UISet : MonoBehaviour {
 		}
 	}
 	public static void SetActiveBigCard(bool check, UICard uiCard) {
+		if (StructManager.myRoomInfo.users [StructManager.user.id].hp <= 0) {
+			return;
+		}
 		if (uiCard == null) {
 			Set_BigCardPanel.SetActive (false);
 			return;
@@ -267,6 +283,23 @@ public class UISet : MonoBehaviour {
 		} else {
 			Set_BigCardPanel.SetActive (false);
 			return;
+		}
+	}
+	public static void SetRoomDefault() {
+		StructManager.myRoomInfo = null;
+		for (int i=0; i<4; i++) {
+			Players [i].GetComponentInChildren<Text> ().text = "";
+		}
+		UICard.gettedCard = 3;
+		UISet.img_profile.sprite = Resources.Load<Sprite> ("UI/alpha");
+		UISet.txt_profile.text = "";
+		UISet.txt_roominfo.text = "";
+		UISet.txt_chatlog.text = "";
+		UISet.txt_status.text = "";
+		UISet.txt_timernotice.text = "";
+		UISet.txt_cardnotice.text = "3";
+		for(int i=UICard.cards.Count - 1; i>=0; i--) {
+			UICard.cards[i].CardDestroy();
 		}
 	}
 	public static void InactiveUI() {

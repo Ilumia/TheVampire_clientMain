@@ -89,7 +89,6 @@ public class UIManagement : MonoBehaviour {
 		UISet.Players = new Button[4];
 		for (int i=0; i<UISet.Players.Length; i++) {
 			UISet.Players[i] = GameObject.Find("Player (" + i + ")").GetComponent<Button>();
-			Image[] tmpImages = UISet.Players[i].GetComponentsInChildren<Image>();
 		}
 		UISet.img_profile = GameObject.Find ("img_profile").GetComponent<Image> ();
 		UISet.txt_chatlog = GameObject.Find ("txt_chatlog").GetComponent<Text> ();
@@ -356,6 +355,21 @@ public class UIManagement : MonoBehaviour {
 		if (!cardNotice.Equals ("")) {
 			UISet.txt_cardnotice.text = cardNotice;
 			timerNotice = "";
+		}
+		if (StructManager.myRoomInfo != null) {
+			if(StructManager.myRoomInfo.users.ContainsKey(StructManager.user.id)) {
+				if (StructManager.myRoomInfo.users [StructManager.user.id].hp <= 0) {
+					StructManager.myRoomInfo.users [StructManager.user.id].hp = 0;
+					string _tmp = UISet.txt_status.text.Split('\n')[0];
+					UISet.txt_status.text = _tmp + "\nHP: 0 / 100";
+					UISet.SetActiveBigCard (false, null);
+					if (!StructManager.isOver) {
+						UISet.SetChat ("<SYSTEM> 당신은 패배했습니다. 게임이 끝날 때 까지 아무 행동도 할 수 없습니다.");
+						StructManager.isOver = true;
+					}
+					return;
+				}
+			}
 		}
 	}
 	void UILoadingProcessing() {

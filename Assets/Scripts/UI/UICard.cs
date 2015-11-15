@@ -46,6 +46,9 @@ public class UICard {
 		SetCard (cardID);
 	}
 	void OnClick() {
+		if (StructManager.myRoomInfo.users [StructManager.user.id].hp < 0) {
+			return;
+		}
 		UISet.SetActiveBigCard (true, this);
 	}
 	public void CardDestroy () {
