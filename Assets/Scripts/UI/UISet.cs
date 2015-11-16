@@ -207,14 +207,14 @@ public class UISet : MonoBehaviour {
 	}
 	public static void Ebtn_chatenter() {
 		if (uiLock) { return; }
-		SoundManager.PlayEffectButtonClick ();
 		if(input_chat.text == null || input_chat.text.Equals("")) { return; }
+		SoundManager.PlayEffectButtonClick ();
 		comm.SendMessageToServer ('G', input_chat.text);
 		input_chat.text = "";
 	}
 	public static void Ebtn_roominvite() {
-		
 		SoundManager.PlayEffectButtonClick ();
+
 	}
 	public static void Ebtn_roomexit() {
 		SoundManager.PlayEffectButtonClick ();
@@ -267,6 +267,7 @@ public class UISet : MonoBehaviour {
 		if (id == 38 || id == 70) {
 			UICard.gettedCard += 2;
 			SetChat("<SYSTEM> [행동 재개]의 효과로 두 개의 카드를 더 뽑을 수 있습니다.");
+			UIManagement.cardNotice = UICard.gettedCard + "";
 		}
 		SetActiveBigCard(false, null);
 		UIManagement.cardUpdateFlag = true;
