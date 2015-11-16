@@ -74,8 +74,8 @@ public class UISet : MonoBehaviour {
 	// Main
 	public static void Ebtn_startgame() {
 		if (uiLock) { return; }
-		ActiveUI (UIState.MAIN_SELECT);
 		SoundManager.PlayEffectButtonClick ();
+		ActiveUI (UIState.MAIN_SELECT);
 	}
 	public static void Ebtn_setting() {
 		if (uiLock) { return; }
@@ -84,8 +84,8 @@ public class UISet : MonoBehaviour {
 	}
 	public static void Ebtn_staff() {
 		if (uiLock) { return; }
-		
 		SoundManager.PlayEffectButtonClick ();
+
 	}
 	public static void Ebtn_exit() {
 		SoundManager.PlayEffectButtonClick ();
@@ -120,22 +120,23 @@ public class UISet : MonoBehaviour {
 	}
 	public static void Ebtn_signup() {
 		if (uiLock) { return; }
+		SoundManager.PlayEffectButtonClick ();
 		comm = Communication.Instance();
 		string email = input_email.text;
 		string password = input_password.text;
 		comm.SendMessageToServer ('I', email + " " + password);
-		SoundManager.PlayEffectButtonClick ();
 		UISet.SetUILock(true);
 	}
 	public static void Ebtn_cancel() {
 		if (uiLock) { return; }
+		SoundManager.PlayEffectButtonClick ();
 		input_email.text = "";
 		input_password.text = "";
-		SoundManager.PlayEffectButtonClick ();
 		ActiveUI (UIState.MAIN);
 	}
 	public static void Ebtn_login() {
 		if (uiLock) { return; }
+		SoundManager.PlayEffectButtonClick ();
 		comm = Communication.Instance();
 		string email = input_email.text;
 		string password = input_password.text;
@@ -151,32 +152,31 @@ public class UISet : MonoBehaviour {
 		} 
 
 		comm.SendMessageToServer ('A', email + " " + password);
-		SoundManager.PlayEffectButtonClick ();
 		UISet.SetUILock(true);
 	}
 	// Lobby
 	public static void Ebtn_roomenter() {
 		if (uiLock) { return; }
-		comm.SendMessageToServer ('F', "");
 		SoundManager.PlayEffectButtonClick ();
+		comm.SendMessageToServer ('F', "");
 		UISet.SetUILock(true);
 	}
 	public static void Ebtn_createroom() {
 		if (uiLock) { return; }
-		comm.SendMessageToServer ('C', "t");
 		SoundManager.PlayEffectButtonClick ();
+		comm.SendMessageToServer ('C', "t");
 		UISet.SetUILock(true);
 	}
 	public static void Ebtn_createprivateroom() {
 		if (uiLock) { return; }
-		comm.SendMessageToServer ('C', "f");
 		SoundManager.PlayEffectButtonClick ();
+		comm.SendMessageToServer ('C', "f");
 		UISet.SetUILock(true);
 	}
 	public static void Ebtn_friends() {
 		if (uiLock) { return; }
-		
 		SoundManager.PlayEffectButtonClick ();
+
 	}
 	public static void Ebtn_lobbyexit() {
 		if (uiLock) { return; }
@@ -190,7 +190,8 @@ public class UISet : MonoBehaviour {
 		if (StructManager.myRoomInfo.users [StructManager.user.id].hp <= 0) {
 			return;
 		}
-
+		SoundManager.PlayEffectCardSelect ();
+		
 		if (_player.Equals (StructManager.user.id)) {
 			SetChat("<SYSTEM> 현재 선택된 카드(" + selectedCard.nameString + 
 			        ")는 자기자신에게 사용할 수 없습니다.");
@@ -201,39 +202,38 @@ public class UISet : MonoBehaviour {
 			UICard.cards[selectedCard.index].CardDestroy();
 			selectedCard.CardDestroy();
 			selectedCard = null;
-			SoundManager.PlayEffectCardSelect ();
 			SetActiveBigCard(false, null);
 		}
 	}
 	public static void Ebtn_chatenter() {
 		if (uiLock) { return; }
+		SoundManager.PlayEffectButtonClick ();
 		if(input_chat.text == null || input_chat.text.Equals("")) { return; }
 		comm.SendMessageToServer ('G', input_chat.text);
 		input_chat.text = "";
-		SoundManager.PlayEffectButtonClick ();
 	}
 	public static void Ebtn_roominvite() {
 		
 		SoundManager.PlayEffectButtonClick ();
 	}
 	public static void Ebtn_roomexit() {
+		SoundManager.PlayEffectButtonClick ();
 		comm.SendMessageToServer ('H', StructManager.myRoomInfo.roomNumber.ToString());
 		UISet.ActiveUI (UISet.UIState.LOBBY_LOBBY);
 		SetRoomDefault ();
-		SoundManager.PlayEffectButtonClick ();
 	}
 	// StartedRoom
 	public static void Ebtn_getinfocard() {
 		if (StructManager.myRoomInfo.users [StructManager.user.id].hp <= 0) {
 			return;
 		}
+		SoundManager.PlayEffectCardSelect ();
 		SetUILock (true);
 		if (UICard.gettedCard > 0) {
 			UICard.gettedCard--;
 			UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.INFO)).SetOrder (0));
 		}
 		SetUILock (false);
-		SoundManager.PlayEffectCardSelect ();
 		UIManagement.cardUpdateFlag = true;
 		UIManagement.cardNotice = UICard.gettedCard.ToString ();
 	}
@@ -241,13 +241,13 @@ public class UISet : MonoBehaviour {
 		if (StructManager.myRoomInfo.users [StructManager.user.id].hp <= 0) {
 			return;
 		}
+		SoundManager.PlayEffectCardSelect ();
 		SetUILock (true);
 		if (UICard.gettedCard > 0) {
 			UICard.gettedCard--;
 			UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (0));
 		}
 		SetUILock (false);
-		SoundManager.PlayEffectCardSelect ();
 		UIManagement.cardUpdateFlag = true;
 		UIManagement.cardNotice = UICard.gettedCard.ToString ();
 	}
@@ -256,6 +256,7 @@ public class UISet : MonoBehaviour {
 			SetActiveBigCard(false, null);
 			return;
 		}
+		SoundManager.PlayEffectCardSelect ();
 		int id = selectedCard.id;
 		bool isTargeting = (id == 30 || id == 34 || id == 37 || id == 60 || id == 61 || id == 69);
 		if (!isTargeting) {
@@ -267,7 +268,6 @@ public class UISet : MonoBehaviour {
 			UICard.gettedCard += 2;
 			SetChat("<SYSTEM> [행동 재개]의 효과로 두 개의 카드를 더 뽑을 수 있습니다.");
 		}
-		SoundManager.PlayEffectCardSelect ();
 		SetActiveBigCard(false, null);
 		UIManagement.cardUpdateFlag = true;
 	}

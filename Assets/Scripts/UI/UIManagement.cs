@@ -27,9 +27,10 @@ public class UIManagement : MonoBehaviour {
 
 	void Start () {
 		UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (0));
-		UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (1));
-		UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (2));
-		UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (3));
+		UICard.cards [0].CardDestroy ();
+		//UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (1));
+		//UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (2));
+		//UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (3));
 		//UISet.SetActiveBigCard (true, UICard.cards [0]);
 	}
 

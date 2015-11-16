@@ -40,12 +40,12 @@ public class Player {
 	public int hp;
 	public bool isAI;
 	public Player() {
-		hp = 100;
+		hp = 10;
 		isAI = false;
 	}
 	public Player(string id) {
 		this.id = id;
-		hp = 100;
+		hp = 10;
 		isAI = false;
 	}
 }

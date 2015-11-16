@@ -12,15 +12,6 @@ public partial class Communication {
 			if (data.Length > 0) {
 				_data = Encoding.Unicode.GetString (data);
 			}
-			string[] separator = new string[] { "$s$" };
-			if (_data.Contains ("$s$")) {
-				string[] tmpData = _data.Split(separator, StringSplitOptions.None);
-				_data = tmpData[0];
-				SendMessageToServer('U', tmpData[1]);
-			} else {
-				//SendMessageToServer('U', "");
-				return;
-			}
 			switch ((char)type) {
 			case 'a':
 				LoginProc(_data);
@@ -29,7 +20,7 @@ public partial class Communication {
 				//미사용
 				break;
 			case 'c':
-				RoomCreateProc(_data);
+				//RoomCreateProc(_data);
 				break;
 			case 'd':
 				FailToRoomEnter();
@@ -71,6 +62,9 @@ public partial class Communication {
 				GameOverProc(_data);
 				break;
 
+			case 'u':
+				GameInfoTurnInfoProc(_data);
+				break;
 			case 'w':
 				ItemListProc(_data);
 				break;
@@ -168,8 +162,6 @@ public partial class Communication {
 		string sender = tempStringArray [0];
 		string chat = _tempStringArray [1];
 		UISet.SetChat (sender + "\t : " + chat);
-		//StructManager.myRoomInfo.chatLog += sender + "\t : " + chat + "\n";
-		//UIManagement.chatUpdateFlag = true;
 	}
 	private void SignUpProc(string data) {
 		if (data.Equals ("s")) {
@@ -193,6 +185,8 @@ public partial class Communication {
 		StructManager.myRoomInfo.roomState = 1;
 		UISet.ActiveUI (UISet.UIState.ROOM_STARTED);
 		UICard.gettedCard = 3;
+		UIManagement.status = "제 " + 1 + " 턴" + "\nHP: " + 
+			StructManager.myRoomInfo.users[StructManager.user.id].hp + " / 100";
 		UIManagement.hpUpdateFlag = true;
 		UIManagement.profileUpdateFlag = true;
 	}
@@ -258,6 +252,15 @@ public partial class Communication {
 		}
 		UISet.SetActiveBigCard (false, null);
 		UISet.ActiveUI (UISet.UIState.ROOM_READIED_PUBLIC);
+	}
+	private void GameInfoTurnInfoProc(string data) {
+		string[] separator = new string[] { "\n\r" };
+		string[] _data = data.Split (separator, StringSplitOptions.None);
+		Debug.Log ("!!!!!!!!!!!!!!!!!!!!!" + data);
+		if (!_data [0].Equals ("")) {
+			GameInfoProc (_data [0]);
+		}
+		GameTurnInfoProc (_data [1]);
 	}
 	private void ItemListProc(string data) {
 		File.WriteAllText (ItemSetInterpreter.path, data);
