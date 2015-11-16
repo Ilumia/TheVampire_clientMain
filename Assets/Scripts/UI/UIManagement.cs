@@ -26,10 +26,12 @@ public class UIManagement : MonoBehaviour {
 	public static string debug;
 
 	void Start () {
+		/*
 		UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (0));
 		UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (1));
 		UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (2));
 		UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (3));
+		*/
 		//UISet.SetActiveBigCard (true, UICard.cards [0]);
 	}
 

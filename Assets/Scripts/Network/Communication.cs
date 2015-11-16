@@ -22,7 +22,7 @@ public partial class Communication {
 	{
 		Debug.Log ("start socket!");
 		socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-		IPEndPoint _ipep = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 50005);
+		IPEndPoint _ipep = new IPEndPoint(IPAddress.Parse("192.168.0.6"), 50005);
 		
 		SocketAsyncEventArgs _args = new SocketAsyncEventArgs();
 		_args.RemoteEndPoint = _ipep;
