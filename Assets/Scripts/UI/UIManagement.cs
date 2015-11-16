@@ -14,6 +14,7 @@ public class UIManagement : MonoBehaviour {
 	public static List<string> UIRoomList;
 	public static bool chatUpdateFlag;
 	public static bool roomUpdateFlag;
+	public static bool roomResetFlag;
 	public static string status;
 	public static bool hpUpdateFlag;
 	public static bool profileUpdateFlag;
@@ -42,6 +43,7 @@ public class UIManagement : MonoBehaviour {
 		UICautionList = new List<string> ();
 		UIRoomList = new List<string> ();
 		roomUpdateFlag = false;
+		roomResetFlag = false;
 		chatUpdateFlag = false;
 		status = "";
 		hpUpdateFlag = false;
@@ -167,6 +169,7 @@ public class UIManagement : MonoBehaviour {
 
 	void LateUpdate() {
 		try {
+			UIRoomResetProcessing();
 			UIEventProcessing ();
 			UILockProcessing ();
 			UILockTimer ();
@@ -318,6 +321,27 @@ public class UIManagement : MonoBehaviour {
 			player.onClick.AddListener(delegate{UISet.EPlayers(_playerID);});
 		}
 	}
+	void UIRoomResetProcessing() {
+		if (!roomResetFlag) { return; }
+		roomResetFlag = false;
+		StructManager.myRoomInfo = null;
+		UICard.gettedCard = 3;
+		UISet.txt_profile.text = "";
+		UISet.txt_roominfo.text = "";
+		UISet.txt_chatlog.text = "";
+		UISet.txt_status.text = "";
+		UISet.txt_timernotice.text = "15";
+		UISet.txt_cardnotice.text = "3";
+		foreach (Button player in UISet.Players) {
+			player.GetComponentInChildren<Text>().text = "";
+		}
+		foreach (Image img in UISet.playerHP.Values) {
+			img.sprite = Resources.Load<Sprite>("UI/alpha");
+		}
+		for(int i=UICard.cards.Count - 1; i>=0; i--) {
+			UICard.cards[i].CardDestroy();
+		}
+	}
 	void UIStatusProcessing() {
 		if (!status.Equals ("")) {
 			UISet.txt_status.text = status;
@@ -405,7 +429,7 @@ public class UIManagement : MonoBehaviour {
 	//for debugging
 	void UIDebuggingProcessing() {
 		if (!debug.Equals ("")) {
-			GameObject.Find("debug").GetComponent<Text>().text = debug;
+			//GameObject.Find("debug").GetComponent<Text>().text = debug;
 			debug = "";
 		}
 	}

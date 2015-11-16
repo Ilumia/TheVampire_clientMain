@@ -86,7 +86,6 @@ public partial class Communication {
 		} else {
 			int itemVersion;
 			Int32.TryParse(data, out itemVersion);
-			Debug.Log ("server: " + itemVersion + ", client: " + GlobalConfig.itemDataVersion);
 			if(itemVersion != GlobalConfig.itemDataVersion) {
 				UISet.ActiveUI (UISet.UIState.CAUTION);
 				UISet.SetCaution("업데이트를 시작합니다.\n잠시 기다려주세요");
@@ -256,7 +255,6 @@ public partial class Communication {
 	private void GameInfoTurnInfoProc(string data) {
 		string[] separator = new string[] { "\n\r" };
 		string[] _data = data.Split (separator, StringSplitOptions.None);
-		Debug.Log ("!!!!!!!!!!!!!!!!!!!!!" + data);
 		if (!_data [0].Equals ("")) {
 			GameInfoProc (_data [0]);
 		}

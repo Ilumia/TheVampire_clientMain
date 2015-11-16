@@ -220,7 +220,7 @@ public class UISet : MonoBehaviour {
 		SoundManager.PlayEffectButtonClick ();
 		comm.SendMessageToServer ('H', StructManager.myRoomInfo.roomNumber.ToString());
 		UISet.ActiveUI (UISet.UIState.LOBBY_LOBBY);
-		SetRoomDefault ();
+		UIManagement.roomResetFlag = true;
 	}
 	// StartedRoom
 	public static void Ebtn_getinfocard() {
@@ -306,23 +306,6 @@ public class UISet : MonoBehaviour {
 		} else {
 			Set_BigCardPanel.SetActive (false);
 			return;
-		}
-	}
-	public static void SetRoomDefault() {
-		StructManager.myRoomInfo = null;
-		for (int i=0; i<4; i++) {
-			Players [i].GetComponentInChildren<Text> ().text = "";
-		}
-		UICard.gettedCard = 3;
-		UISet.img_profile.sprite = Resources.Load<Sprite> ("UI/alpha");
-		UISet.txt_profile.text = "";
-		UISet.txt_roominfo.text = "";
-		UISet.txt_chatlog.text = "";
-		UISet.txt_status.text = "";
-		UISet.txt_timernotice.text = "";
-		UISet.txt_cardnotice.text = "3";
-		for(int i=UICard.cards.Count - 1; i>=0; i--) {
-			UICard.cards[i].CardDestroy();
 		}
 	}
 	public static void InactiveUI() {
