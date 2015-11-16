@@ -303,6 +303,7 @@ public class UISet : MonoBehaviour {
 			txt_bigcarddescription.text = selectedCard.description;
 			txt_bigcardname.text = selectedCard.nameString;
 			img_bigcardimage.sprite = selectedCard.img;
+			selectedCard.highlight.color = new Color (0.390625f, 0, 0, 0.6640625f);
 		} else {
 			Set_BigCardPanel.SetActive (false);
 			return;

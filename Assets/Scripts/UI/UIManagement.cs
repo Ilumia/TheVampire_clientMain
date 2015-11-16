@@ -29,7 +29,8 @@ public class UIManagement : MonoBehaviour {
 	void Start () {
 		UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (0));
 		UICard.cards [0].CardDestroy ();
-		//UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (1));
+		UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (0));
+		UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (1));
 		//UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (2));
 		//UICard.cards.Add (new UICard (CardGenerator.GetCard (CardType.BATTLE)).SetOrder (3));
 		//UISet.SetActiveBigCard (true, UICard.cards [0]);
@@ -265,6 +266,7 @@ public class UIManagement : MonoBehaviour {
 			UISet.scroll_chat.value = 0;
 		} else {
 			UISet.txt_chatlog.text = StructManager.myRoomInfo.chatLog;
+			UISet.scroll_chat.value = 0;
 		}
 	}
 	void UIRoomUpdateProcessing() {
@@ -306,6 +308,9 @@ public class UIManagement : MonoBehaviour {
 			foreach(Image img in tmpImages) {
 				if(img.name.Contains("hp")){
 					UISet.playerHP.Add(player.id, img);
+				}
+				if(img.name.Contains("highlight") && player.id.Equals(StructManager.user.id)) {
+					img.color = new Color(0.2109375f, 1.0f, 0.25f, 0.30078125f);
 				}
 			}
 			x++;

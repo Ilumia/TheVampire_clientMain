@@ -22,6 +22,8 @@ public class UICard {
 	static Vector2 imagePos_small = new Vector2 (0, 26.8f);
 	//static Vector2 imageSize_big = new Vector2 (10, 10);
 	//static Vector2 imagePos_big = new Vector2 (0, 0);
+	static Vector2 highlightSize_small = new Vector2 (156, 194);
+	static Vector2 highlightPos_small = Vector2.zero;
 
 	GameObject card;
 	RectTransform cardTransform;
@@ -36,6 +38,7 @@ public class UICard {
 	Text name;
 	Image image;
 	Button button;
+	public Image highlight;
 
 	public UICard() {  }
 	public UICard(int cardID) {
@@ -173,6 +176,18 @@ public class UICard {
 		imageTransform.anchoredPosition = imagePos_small;
 		image = imageObject.AddComponent<Image> ();
 		image.sprite = Resources.Load<Sprite> ("CardSet/00");
+
+		GameObject highlightObject = new GameObject ();
+		highlightObject.name = "highlight";
+		highlightObject.transform.SetParent(card.transform);
+		highlightObject.transform.localScale = Vector3.one;
+		RectTransform highlightTransform = highlightObject.AddComponent<RectTransform> ();
+		highlightTransform.sizeDelta = highlightSize_small;
+		highlightTransform.anchoredPosition = highlightPos_small;
+		highlight = highlightObject.AddComponent<Image> ();
+		highlight.sprite = Resources.Load<Sprite> ("UI/img_cardhighlight");
+		highlight.color = new Color (0, 0, 0, 0);
+
 		if (size == CardSize.SMALL) {
 			card.transform.SetParent(cardSetTransform);
 			//card.transform.parent = cardSet.transform;
